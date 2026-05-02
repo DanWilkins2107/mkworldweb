@@ -1,6 +1,7 @@
 import { get, onValue, ref, set, update } from "firebase/database";
 import { useEffect, useState } from "react";
 import { database } from "../firebase";
+import { TRACKS } from "../tracks";
 
 export type TournamentStatus = "not-started" | "in-progress" | "finished";
 
@@ -44,7 +45,17 @@ export function subscribeToTournament(
   return unsubscribe;
 }
 
-export async function startTournament(trackSlug: string): Promise<void> {
+function pickRandomTrack(used: Set<string>): string {
+  const available = TRACKS.filter((t) => !used.has(t.slug));
+  if (available.length === 0) {
+    throw new Error("No available tracks left to pick.");
+  }
+  const idx = Math.floor(Math.random() * available.length);
+  return available[idx].slug;
+}
+
+export async function startTournament(): Promise<void> {
+  const trackSlug = pickRandomTrack(new Set());
   await set(ref(database, TOURNAMENT_PATH), {
     status: "in-progress",
     currentWeek: 1,
@@ -52,7 +63,7 @@ export async function startTournament(trackSlug: string): Promise<void> {
   });
 }
 
-export async function advanceWeek(trackSlug: string): Promise<void> {
+export async function advanceWeek(): Promise<void> {
   const tRef = ref(database, TOURNAMENT_PATH);
   const snapshot = await get(tRef);
   const current = normalize(snapshot.val() as RawTournament);
@@ -62,11 +73,16 @@ export async function advanceWeek(trackSlug: string): Promise<void> {
   if (current.currentWeek >= 30) {
     throw new Error("Tournament is already on its final week.");
   }
+  const trackSlug = pickRandomTrack(usedTrackSlugs(current));
   const nextWeek = current.currentWeek + 1;
   await update(tRef, {
     currentWeek: nextWeek,
     [`weeks/${nextWeek}`]: { trackSlug },
   });
+}
+
+export async function resetTournament(): Promise<void> {
+  await set(ref(database, TOURNAMENT_PATH), null);
 }
 
 export async function finishTournament(): Promise<void> {

@@ -3,14 +3,11 @@ import { clearAllPlayers } from "../db/players";
 import {
   advanceWeek,
   finishTournament,
+  resetTournament,
   startTournament,
   useTournament,
-  usedTrackSlugs,
 } from "../db/tournament";
-import { TrackPickerModal } from "./TrackPickerModal";
 import "./Admin.css";
-
-type PickerMode = "start" | "advance" | null;
 
 export function Admin() {
   const tournament = useTournament();
@@ -18,16 +15,29 @@ export function Admin() {
   const [resetting, setResetting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [pickerMode, setPickerMode] = useState<PickerMode>(null);
+  const [tournamentBusy, setTournamentBusy] = useState(false);
+  const [tournamentError, setTournamentError] = useState<string | null>(null);
   const [finishOpen, setFinishOpen] = useState(false);
   const [finishing, setFinishing] = useState(false);
   const [finishError, setFinishError] = useState<string | null>(null);
+
+  async function runTournamentAction(action: () => Promise<void>) {
+    setTournamentBusy(true);
+    setTournamentError(null);
+    try {
+      await action();
+    } catch (err) {
+      setTournamentError(err instanceof Error ? err.message : "Action failed.");
+    } finally {
+      setTournamentBusy(false);
+    }
+  }
 
   async function handleReset() {
     setResetting(true);
     setError(null);
     try {
-      await clearAllPlayers();
+      await Promise.all([clearAllPlayers(), resetTournament()]);
       setConfirmOpen(false);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to reset.";
@@ -67,13 +77,14 @@ export function Admin() {
 
           {tournament !== null && tournament.status === "not-started" && (
             <>
-              <p>The tournament hasn't started yet. Pick week 1's track to begin.</p>
+              <p>The tournament hasn't started yet. Week 1's track will be picked at random.</p>
               <button
                 type="button"
                 className="btn-secondary"
-                onClick={() => setPickerMode("start")}
+                onClick={() => runTournamentAction(startTournament)}
+                disabled={tournamentBusy}
               >
-                Start tournament
+                {tournamentBusy ? <span className="spinner" /> : "Start tournament"}
               </button>
             </>
           )}
@@ -82,13 +93,21 @@ export function Admin() {
             tournament.status === "in-progress" &&
             tournament.currentWeek < 30 && (
               <>
-                <p>Currently on week {tournament.currentWeek} of 30.</p>
+                <p>
+                  Currently on week {tournament.currentWeek} of 30. The next week's
+                  track will be picked at random.
+                </p>
                 <button
                   type="button"
                   className="btn-secondary"
-                  onClick={() => setPickerMode("advance")}
+                  onClick={() => runTournamentAction(advanceWeek)}
+                  disabled={tournamentBusy}
                 >
-                  Advance to next week
+                  {tournamentBusy ? (
+                    <span className="spinner" />
+                  ) : (
+                    `Advance to week ${tournament.currentWeek + 1}`
+                  )}
                 </button>
               </>
             )}
@@ -111,11 +130,13 @@ export function Admin() {
           {tournament !== null && tournament.status === "finished" && (
             <p>Tournament complete.</p>
           )}
+
+          {tournamentError && <div className="form-error">{tournamentError}</div>}
         </div>
 
         <div className="admin-card admin-card-spaced">
-          <h2>Reset all players</h2>
-          <p>Wipes every player from the leaderboard. This cannot be undone.</p>
+          <h2>Reset tournament</h2>
+          <p>Wipes the tournament and every player. Starts everything from scratch. This cannot be undone.</p>
           <button
             type="button"
             className="btn-danger"
@@ -125,32 +146,6 @@ export function Admin() {
           </button>
         </div>
       </section>
-
-      {pickerMode === "start" && tournament !== null && (
-        <TrackPickerModal
-          title="Pick week 1's track"
-          excludeSlugs={new Set()}
-          submitLabel="Start tournament"
-          onConfirm={async (slug) => {
-            await startTournament(slug);
-            setPickerMode(null);
-          }}
-          onCancel={() => setPickerMode(null)}
-        />
-      )}
-
-      {pickerMode === "advance" && tournament !== null && (
-        <TrackPickerModal
-          title={`Pick week ${tournament.currentWeek + 1}'s track`}
-          excludeSlugs={usedTrackSlugs(tournament)}
-          submitLabel={`Advance to week ${tournament.currentWeek + 1}`}
-          onConfirm={async (slug) => {
-            await advanceWeek(slug);
-            setPickerMode(null);
-          }}
-          onCancel={() => setPickerMode(null)}
-        />
-      )}
 
       {finishOpen && (
         <div
@@ -212,9 +207,9 @@ export function Admin() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="modal-body">
-              <h2 id="reset-confirm-title">Are you sure?</h2>
+              <h2 id="reset-confirm-title">Reset everything?</h2>
               <p>
-                This will permanently delete every player. There's no undo.
+                This will permanently delete the tournament and every player. There's no undo.
               </p>
               {error && <div className="form-error">{error}</div>}
               <div className="modal-actions">
