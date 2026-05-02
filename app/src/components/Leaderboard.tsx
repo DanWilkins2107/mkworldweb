@@ -8,6 +8,7 @@ import {
   useTimes,
 } from "../db/times";
 import { useTournament } from "../db/tournament";
+import { TRACKS } from "../tracks";
 import { SubmitTimeModal } from "./SubmitTimeModal";
 import "./Leaderboard.css";
 
@@ -93,6 +94,25 @@ export function Leaderboard() {
           setSelectedWeek={setSelectedWeekOverride}
         />
       )}
+    </div>
+  );
+}
+
+function WeekTrackInfo({ week }: { week: number }) {
+  const tournament = useTournament();
+  if (!tournament) return null;
+  const w = tournament.weeks[String(week)];
+  if (!w) return null;
+  const track = TRACKS.find((t) => t.slug === w.trackSlug);
+  if (!track) return null;
+  return (
+    <div className="leaderboard-track">
+      <img
+        className="leaderboard-track-image"
+        src={`/tracks/${track.slug}.png`}
+        alt={track.displayName}
+      />
+      <span className="leaderboard-track-name">{track.displayName}</span>
     </div>
   );
 }
@@ -235,6 +255,7 @@ function WeekView({
           ›
         </button>
       </div>
+      {week !== currentWeek && <WeekTrackInfo week={week} />}
       <ol className="leaderboard">
         {ranking.map((row) => {
           const player = playerById.get(row.playerId);
