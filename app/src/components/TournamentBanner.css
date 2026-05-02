@@ -60,6 +60,12 @@
   letter-spacing: 0.5px;
 }
 
+.tournament-banner-actions {
+  margin-top: 14px;
+  display: flex;
+  justify-content: center;
+}
+
 .tournament-banner-finished {
   background: linear-gradient(180deg, #ffffff 0%, #d6f1ff 100%);
 }

@@ -43,6 +43,15 @@
       "$other": {
         ".validate": false
       }
+    },
+    "times": {
+      ".read": true,
+      "$week": {
+        ".write": "$week.matches(/^([1-9]|[12][0-9]|30)$/)",
+        "$playerId": {
+          ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 1800000"
+        }
+      }
     }
   }
 }

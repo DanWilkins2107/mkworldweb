@@ -1,0 +1,54 @@
+.submit-time-select,
+.submit-time-input {
+  font: 16px/1.4 var(--sans);
+  font-weight: 500;
+  padding: 12px 14px;
+  border: 3px solid var(--stroke);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: inset 0 2px 0 rgba(13, 27, 42, 0.08);
+  transition:
+    border-color 0.12s ease,
+    box-shadow 0.12s ease;
+}
+
+.submit-time-select:focus,
+.submit-time-input:focus {
+  outline: none;
+  border-color: var(--mk-blue);
+  box-shadow:
+    inset 0 2px 0 rgba(13, 27, 42, 0.05),
+    0 0 0 4px rgba(40, 145, 255, 0.3);
+}
+
+.submit-time-input {
+  font-family: var(--display);
+  letter-spacing: 1px;
+  font-size: 22px;
+  text-align: center;
+}
+
+.submit-time-select:disabled,
+.submit-time-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.submit-time-hint {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--mk-red-dark);
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.submit-time-actions {
+  flex-wrap: wrap;
+}
+
+.submit-time-delete {
+  margin-right: auto;
+  background: linear-gradient(180deg, #ffffff 0%, #ffd7d7 100%);
+  color: var(--mk-red-dark);
+}

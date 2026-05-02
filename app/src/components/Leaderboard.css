@@ -1,8 +1,127 @@
+.leaderboard-container {
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ===== Tabs ===== */
+
+.leaderboard-tabs {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  padding: 4px;
+  background: rgba(13, 27, 42, 0.08);
+  border: 3px solid var(--stroke);
+  border-radius: 999px;
+  align-self: center;
+}
+
+.leaderboard-tab {
+  font-family: var(--display);
+  font-size: 16px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 8px 22px;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.08s ease;
+}
+
+.leaderboard-tab:hover {
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.leaderboard-tab-active {
+  background: linear-gradient(180deg, #ffffff 0%, var(--mk-yellow) 100%);
+  border-color: var(--mk-red);
+  color: var(--ink);
+  box-shadow: 0 3px 0 rgba(13, 27, 42, 0.18);
+}
+
+/* ===== Week header (prev/next + label) ===== */
+
+.leaderboard-week-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+
+.leaderboard-week-label {
+  font-family: var(--display);
+  font-size: 22px;
+  letter-spacing: 1px;
+  color: var(--ink);
+  min-width: 100px;
+  text-align: center;
+}
+
+.leaderboard-week-arrow {
+  font-family: var(--display);
+  font-size: 24px;
+  line-height: 1;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 3px solid var(--stroke);
+  background: linear-gradient(180deg, #ffffff 0%, #e9eef5 100%);
+  color: var(--ink);
+  cursor: pointer;
+  box-shadow: 0 3px 0 rgba(13, 27, 42, 0.18);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.leaderboard-week-arrow:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.leaderboard-week-arrow:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ===== Track info row above week leaderboard ===== */
+
+.leaderboard-track {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 6px 12px;
+  font-family: var(--display);
+  letter-spacing: 0.5px;
+  color: var(--ink);
+}
+
+.leaderboard-track-image {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border: 3px solid var(--stroke);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 3px 0 rgba(13, 27, 42, 0.18);
+}
+
+.leaderboard-track-name {
+  font-size: 16px;
+}
+
+/* ===== Leaderboard list ===== */
+
 .leaderboard {
   list-style: none;
   padding: 0;
-  margin: 0 auto;
-  max-width: 680px;
+  margin: 0;
   display: flex;
   flex-direction: column;
   text-align: left;
@@ -38,6 +157,10 @@
   background: linear-gradient(180deg, #ffe8d6 0%, #f5c89a 100%);
 }
 
+.leaderboard-row-unranked {
+  opacity: 0.78;
+}
+
 .leaderboard-rank {
   font-family: var(--display);
   font-size: 30px;
@@ -70,6 +193,14 @@
   color: #fff;
 }
 
+.leaderboard-rank-empty {
+  background: transparent;
+  color: rgba(13, 27, 42, 0.4);
+  border-color: transparent;
+  box-shadow: none;
+  font-size: 22px;
+}
+
 .leaderboard-avatar {
   width: 56px;
   height: 56px;
@@ -91,6 +222,38 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.leaderboard-points {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  font-family: var(--display);
+  color: var(--ink);
+  flex-shrink: 0;
+}
+
+.leaderboard-points-value {
+  font-size: 26px;
+}
+
+.leaderboard-points-label {
+  font-size: 14px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.leaderboard-time {
+  font-family: var(--display);
+  font-size: 22px;
+  color: var(--ink);
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.leaderboard-time-empty {
+  opacity: 0.5;
 }
 
 /* Empty + loading states */
@@ -143,6 +306,10 @@
     height: 46px;
   }
   .leaderboard-name {
+    font-size: 18px;
+  }
+  .leaderboard-points-value,
+  .leaderboard-time {
     font-size: 18px;
   }
 }
