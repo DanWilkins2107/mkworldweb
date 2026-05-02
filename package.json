@@ -1,0 +1,7 @@
+{
+  "name": "mkworldweb",
+  "private": true,
+  "devDependencies": {
+    "firebase-tools": "^13.0.0"
+  }
+}
