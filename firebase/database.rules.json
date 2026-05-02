@@ -3,7 +3,7 @@
     "players": {
       ".read": true,
       "$id": {
-        ".write": "!data.exists() && newData.exists() && root.child('players').numChildren() < 30",
+        ".write": "!data.exists() && newData.exists()",
         ".validate": "newData.hasChildren(['name', 'avatar'])",
         "name": {
           ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 50"
@@ -12,7 +12,7 @@
           ".validate": "newData.val() === null || (newData.isString() && newData.val().length <= 50)"
         },
         "avatar": {
-          ".validate": "newData.isString() && newData.val().matches(/^(mario|luigi|peach|bowser)$/)"
+          ".validate": "newData.isString() && newData.val().matches(/^(baby-daisy|baby-luigi|baby-mario|baby-peach|baby-rosalina|birdo|bowser|bowser-jr|cataquack|chargin-chuck|cheep-cheep|coin-coffer|cow|daisy|dolphin|donkey-kong|dry-bones|fish-bone|goomba|hammer-bro|king-boo|koopa-troopa|lakitu|luigi|mario|nabbit|para-biddybud|pauline|peach|peepa|penguin|pianta|piranha-plant|pokey|rocky-wrench|rosalina|shy-guy|sidestepper|snowman|stingby|swoop|toad|toadette|waluigi|wario|wiggler|yoshi)$/)"
         },
         "$other": {
           ".validate": false
