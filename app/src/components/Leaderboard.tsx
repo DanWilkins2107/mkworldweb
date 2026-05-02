@@ -7,7 +7,6 @@ import {
   useTimes,
 } from "../db/times";
 import { useTournament } from "../db/tournament";
-import { TRACKS } from "../tracks";
 import "./Leaderboard.css";
 
 type View = "week" | "overall";
@@ -16,7 +15,7 @@ export function Leaderboard() {
   const [players, setPlayers] = useState<Player[] | null>(null);
   const tournament = useTournament();
   const times = useTimes();
-  const [view, setView] = useState<View>("overall");
+  const [view, setView] = useState<View>("week");
   const [selectedWeekOverride, setSelectedWeekOverride] = useState<number | null>(null);
 
   useEffect(() => {
@@ -51,17 +50,6 @@ export function Leaderboard() {
         <button
           type="button"
           role="tab"
-          aria-selected={view === "overall"}
-          className={
-            "leaderboard-tab" + (view === "overall" ? " leaderboard-tab-active" : "")
-          }
-          onClick={() => setView("overall")}
-        >
-          Overall
-        </button>
-        <button
-          type="button"
-          role="tab"
           aria-selected={view === "week"}
           className={
             "leaderboard-tab" + (view === "week" ? " leaderboard-tab-active" : "")
@@ -69,6 +57,17 @@ export function Leaderboard() {
           onClick={() => setView("week")}
         >
           Week
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={view === "overall"}
+          className={
+            "leaderboard-tab" + (view === "overall" ? " leaderboard-tab-active" : "")
+          }
+          onClick={() => setView("overall")}
+        >
+          Overall
         </button>
       </div>
 
@@ -166,12 +165,7 @@ function WeekView({
   const playerById = new Map<string, Player>();
   for (const p of players) playerById.set(p.id, p);
 
-  // Track for the week header. Only present in tournament.weeks for in-progress/finished.
-  // We only have access to TRACKS list — look up via current tournament hook would require it.
-  // To keep the WeekView pure-of-tournament-shape, we'll fetch track via slug lookup only if available.
-  // For simplicity, we reconstruct trackSlug below from a passthrough... but we don't have it.
-  // Actually we DO need it; let's fetch via useTournament again here? No — re-render heavy.
-  // Simpler: import useTournament here too.
+  const weekLabel = week === currentWeek ? "This week" : `Week ${week}`;
 
   return (
     <>
@@ -185,7 +179,7 @@ function WeekView({
         >
           ‹
         </button>
-        <span className="leaderboard-week-label">Week {week}</span>
+        <span className="leaderboard-week-label">{weekLabel}</span>
         <button
           type="button"
           className="leaderboard-week-arrow"
@@ -196,7 +190,6 @@ function WeekView({
           ›
         </button>
       </div>
-      <WeekTrackInfo week={week} />
       <ol className="leaderboard">
         {ranking.map((row) => {
           const player = playerById.get(row.playerId);
@@ -238,21 +231,3 @@ function WeekView({
   );
 }
 
-function WeekTrackInfo({ week }: { week: number }) {
-  const tournament = useTournament();
-  if (!tournament) return null;
-  const w = tournament.weeks[String(week)];
-  if (!w) return null;
-  const track = TRACKS.find((t) => t.slug === w.trackSlug);
-  if (!track) return null;
-  return (
-    <div className="leaderboard-track">
-      <img
-        className="leaderboard-track-image"
-        src={`/tracks/${track.slug}.png`}
-        alt={track.displayName}
-      />
-      <span className="leaderboard-track-name">Track: {track.displayName}</span>
-    </div>
-  );
-}

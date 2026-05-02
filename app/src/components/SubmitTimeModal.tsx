@@ -19,13 +19,14 @@ type Props = {
 function maskInput(raw: string): string {
   const digits = raw.replace(/\D/g, "").slice(0, 7);
   if (digits.length === 0) return "";
-  if (digits.length <= 1) return digits;
-  if (digits.length <= 3) return `${digits[0]}:${digits.slice(1)}`;
-  if (digits.length <= 4) {
-    return `${digits[0]}:${digits.slice(1, 3)}.${digits.slice(3)}`;
-  }
-  const mLen = digits.length - 5;
-  return `${digits.slice(0, mLen)}:${digits.slice(mLen, mLen + 2)}.${digits.slice(mLen + 2)}`;
+  if (digits.length === 1) return digits;
+  // Always lead with minutes: 1 digit unless we hit the max of 7 digits (e.g. "30:00.000").
+  const mLen = digits.length >= 7 ? 2 : 1;
+  const m = digits.slice(0, mLen);
+  const rest = digits.slice(mLen);
+  if (rest.length === 0) return m;
+  if (rest.length <= 2) return `${m}:${rest}`;
+  return `${m}:${rest.slice(0, 2)}.${rest.slice(2)}`;
 }
 
 export function SubmitTimeModal({ week, players, existingTimes, onClose }: Props) {
@@ -133,7 +134,7 @@ export function SubmitTimeModal({ week, players, existingTimes, onClose }: Props
                 <option value="">— Select a player —</option>
                 {players.map((p) => (
                   <option key={p.id} value={p.id}>
-                    {p.name} ({p.slackName})
+                    {p.name}
                     {existingTimes[p.id] !== undefined ? " ✓" : ""}
                   </option>
                 ))}
