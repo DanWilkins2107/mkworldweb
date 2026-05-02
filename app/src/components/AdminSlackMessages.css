@@ -76,3 +76,22 @@
   min-width: 130px;
   text-align: center;
 }
+
+.slack-message-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-top: 2px solid var(--stroke);
+  background: rgba(13, 27, 42, 0.04);
+}
+
+.slack-deadline-label {
+  font-family: var(--display);
+  font-size: 14px;
+  letter-spacing: 0.4px;
+  color: var(--ink);
+  min-width: 220px;
+  text-align: center;
+}

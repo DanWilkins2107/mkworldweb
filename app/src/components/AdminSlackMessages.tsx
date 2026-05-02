@@ -15,8 +15,24 @@ function whoFor(player: Player): string {
   return player.slackName || player.name;
 }
 
-function slackLink(url: string, text: string): string {
-  return `<${url}|${text}>`;
+function nextFridayAt4pm(from: Date = new Date()): Date {
+  const d = new Date(from);
+  const day = d.getDay(); // 0 = Sun, 5 = Fri
+  let daysUntilFri = (5 - day + 7) % 7;
+  if (daysUntilFri === 0 && d.getHours() >= 16) daysUntilFri = 7;
+  d.setDate(d.getDate() + daysUntilFri);
+  d.setHours(16, 0, 0, 0);
+  return d;
+}
+
+function formatDeadline(d: Date): string {
+  const weekday = d.toLocaleDateString(undefined, { weekday: "long" });
+  const date = d.toLocaleDateString(undefined, { day: "numeric", month: "long" });
+  let hours = d.getHours();
+  const mins = d.getMinutes().toString().padStart(2, "0");
+  const period = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12 || 12;
+  return `${weekday}, ${date} at ${hours}:${mins} ${period}`;
 }
 
 const DIGIT_NAMES = [
@@ -40,9 +56,15 @@ function rankEmoji(n: number): string {
   return `${n}.`;
 }
 
-function buildAnnouncement(week: number, trackName: string, url: string): string {
+function buildAnnouncement(
+  week: number,
+  trackName: string,
+  url: string,
+  deadline: Date,
+): string {
   return `*Week ${week}: ${trackName}*
-Submit your times ${slackLink(url, "here")}.`;
+Visit ${url} to submit your time.
+Deadline: ${formatDeadline(deadline)}`;
 }
 
 function buildReminder(
@@ -53,7 +75,7 @@ function buildReminder(
 ): string {
   const lines = [
     `*Reminder — Week ${week}: ${trackName}*`,
-    `Don't forget to submit your time ${slackLink(url, "here")}.`,
+    `Visit ${url} to submit your time.`,
   ];
   if (outstanding.length > 0) {
     lines.push("");
@@ -69,7 +91,6 @@ function buildResults(
   trackName: string,
   url: string,
   rankedRows: { player: Player; ms: number; rank: number; points: number }[],
-  outstanding: Player[],
   overall: { player: Player; totalPoints: number }[],
 ): string {
   const lines = [`*Week ${week} results — ${trackName}*`, ""];
@@ -82,21 +103,25 @@ function buildResults(
       );
     }
   }
-  if (outstanding.length > 0) {
-    lines.push("");
-    lines.push(`DNS: ${outstanding.map(whoFor).join(", ")}`);
-  }
   if (overall.length > 0) {
     lines.push("", "*Overall standings*");
     overall.forEach((row, i) => {
       lines.push(`${i + 1}. ${whoFor(row.player)} — ${row.totalPoints} pts`);
     });
   }
-  lines.push("", `Full leaderboard ${slackLink(url, "here")}.`);
+  lines.push("", `Visit ${url} for the full leaderboard.`);
   return lines.join("\n");
 }
 
-function MessageBlock({ title, text }: { title: string; text: string }) {
+function MessageBlock({
+  title,
+  text,
+  footer,
+}: {
+  title: string;
+  text: string;
+  footer?: React.ReactNode;
+}) {
   const [copied, setCopied] = useState(false);
 
   async function handleCopy() {
@@ -118,7 +143,38 @@ function MessageBlock({ title, text }: { title: string; text: string }) {
         </button>
       </div>
       <pre className="slack-message-text">{text}</pre>
+      {footer && <div className="slack-message-footer">{footer}</div>}
     </div>
+  );
+}
+
+function DeadlineControls({
+  deadline,
+  onShift,
+}: {
+  deadline: Date;
+  onShift: (days: number) => void;
+}) {
+  return (
+    <>
+      <button
+        type="button"
+        className="leaderboard-week-arrow"
+        onClick={() => onShift(-7)}
+        aria-label="Move deadline back a week"
+      >
+        ‹
+      </button>
+      <span className="slack-deadline-label">{formatDeadline(deadline)}</span>
+      <button
+        type="button"
+        className="leaderboard-week-arrow"
+        onClick={() => onShift(7)}
+        aria-label="Move deadline forward a week"
+      >
+        ›
+      </button>
+    </>
   );
 }
 
@@ -127,6 +183,15 @@ export function AdminSlackMessages() {
   const times = useTimes();
   const [players, setPlayers] = useState<Player[] | null>(null);
   const [selectedOverride, setSelectedOverride] = useState<number | null>(null);
+  const [deadline, setDeadline] = useState<Date>(() => nextFridayAt4pm());
+
+  function shiftDeadline(days: number) {
+    setDeadline((d) => {
+      const next = new Date(d);
+      next.setDate(next.getDate() + days);
+      return next;
+    });
+  }
 
   useEffect(() => subscribeToPlayers(setPlayers), []);
 
@@ -229,7 +294,8 @@ export function AdminSlackMessages() {
       </div>
       <MessageBlock
         title="Week announcement"
-        text={buildAnnouncement(selectedWeek, trackName, url)}
+        text={buildAnnouncement(selectedWeek, trackName, url, deadline)}
+        footer={<DeadlineControls deadline={deadline} onShift={shiftDeadline} />}
       />
       <MessageBlock
         title="Reminder"
@@ -237,7 +303,7 @@ export function AdminSlackMessages() {
       />
       <MessageBlock
         title="Results"
-        text={buildResults(selectedWeek, trackName, url, rankedRows, outstanding, overall)}
+        text={buildResults(selectedWeek, trackName, url, rankedRows, overall)}
       />
     </div>
   );
