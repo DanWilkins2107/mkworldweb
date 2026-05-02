@@ -32,6 +32,10 @@
     0 10px 18px rgba(13, 27, 42, 0.18);
 }
 
+.admin-card-spaced {
+  margin-top: 18px;
+}
+
 .admin-card h2 {
   font-family: var(--display);
   margin-top: 0;

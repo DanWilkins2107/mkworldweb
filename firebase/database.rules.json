@@ -19,6 +19,30 @@
           ".validate": false
         }
       }
+    },
+    "tournament": {
+      ".read": true,
+      ".write": true,
+      "status": {
+        ".validate": "newData.isString() && newData.val().matches(/^(not-started|in-progress|finished)$/)"
+      },
+      "currentWeek": {
+        ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 30"
+      },
+      "weeks": {
+        "$week": {
+          ".validate": "$week.matches(/^([1-9]|[12][0-9]|30)$/) && newData.hasChildren(['trackSlug'])",
+          "trackSlug": {
+            ".validate": "newData.isString() && newData.val().matches(/^(acorn-heights|airship-fortress|boo-cinema|bowsers-castle|cheep-cheep-falls|choco-mountain|crown-city|dandelion-depths|desert-hills|dino-dino-jungle|dk-pass|dk-spaceport|dry-bones-burnout|faraway-oasis|great-question-block-ruins|koopa-troopa-beach|mario-bros-circuit|mario-circuit|moo-moo-meadows|peach-beach|peach-stadium|rainbow-road|salty-salty-speedway|shy-guy-bazaar|sky-high-sundae|starview-peak|toads-factory|wario-shipyard|wario-stadium|whistlestop-summit)$/)"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      },
+      "$other": {
+        ".validate": false
+      }
     }
   }
 }
