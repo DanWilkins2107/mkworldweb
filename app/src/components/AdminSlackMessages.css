@@ -1,0 +1,50 @@
+.slack-help {
+  margin-top: 0;
+  color: var(--ink);
+  opacity: 0.75;
+  font-size: 14px;
+}
+
+.slack-message {
+  margin-top: 14px;
+  border: 2px solid var(--stroke);
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.slack-message-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(13, 27, 42, 0.05);
+  border-bottom: 2px solid var(--stroke);
+}
+
+.slack-message-header h3 {
+  font-family: var(--display);
+  margin: 0;
+  font-size: 16px;
+  color: var(--ink);
+  letter-spacing: 0.5px;
+}
+
+.slack-copy-btn {
+  padding: 6px 14px;
+  min-width: auto;
+  min-height: auto;
+  font-size: 13px;
+}
+
+.slack-message-text {
+  margin: 0;
+  padding: 12px;
+  font-family: ui-monospace, "Menlo", Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink);
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: #fff;
+}

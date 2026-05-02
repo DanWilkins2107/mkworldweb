@@ -7,6 +7,7 @@ import {
   startTournament,
   useTournament,
 } from "../db/tournament";
+import { AdminSlackMessages } from "./AdminSlackMessages";
 import "./Admin.css";
 
 export function Admin() {
@@ -133,6 +134,8 @@ export function Admin() {
 
           {tournamentError && <div className="form-error">{tournamentError}</div>}
         </div>
+
+        <AdminSlackMessages />
 
         <div className="admin-card admin-card-spaced">
           <h2>Reset tournament</h2>

@@ -146,7 +146,6 @@ export function SubmitTimeModal({
                 {players.map((p) => (
                   <option key={p.id} value={p.id}>
                     {p.name}
-                    {existingTimes[p.id] !== undefined ? " ✓" : ""}
                   </option>
                 ))}
               </select>
