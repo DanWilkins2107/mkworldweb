@@ -1,224 +1,167 @@
+/* ===== Header / hero ===== */
+
 .site-header {
   padding: 32px 16px 8px;
   text-align: center;
+  position: relative;
 }
 
 .site-header h1 {
-  margin: 0 0 8px;
+  font-family: var(--display);
+  /* layered text-shadow for that game-logo outline + drop look */
+  color: #fff;
+  text-shadow:
+    -3px 0 0 var(--stroke),
+    3px 0 0 var(--stroke),
+    0 -3px 0 var(--stroke),
+    0 3px 0 var(--stroke),
+    -3px -3px 0 var(--stroke),
+    3px -3px 0 var(--stroke),
+    -3px 3px 0 var(--stroke),
+    3px 3px 0 var(--stroke),
+    0 8px 0 var(--mk-red-dark),
+    0 12px 24px rgba(13, 27, 42, 0.35);
+  transform: rotate(-2deg);
+  display: inline-block;
 }
 
 .tagline {
-  color: var(--text);
-  margin: 0;
+  display: inline-block;
+  margin-top: 18px;
+  padding: 4px 14px;
+  background: var(--ink);
+  color: #fff;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
+/* ===== Action bar ===== */
+
 .actions {
-  padding: 16px;
+  padding: 24px 16px 8px;
   display: flex;
   justify-content: center;
 }
 
-.btn-primary {
-  background: var(--accent);
-  color: #fff;
-  border: 1px solid var(--accent-border);
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-size: 16px;
-  font-family: var(--sans);
+/* ===== Primary / secondary buttons ===== */
+
+.btn-primary,
+.btn-secondary {
+  font-family: var(--display);
+  font-weight: 400;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-size: 18px;
+  padding: 14px 28px;
+  border-radius: 16px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 120px;
-  min-height: 42px;
+  gap: 8px;
+  min-width: 140px;
+  min-height: 52px;
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease,
+    filter 0.15s ease;
+  user-select: none;
+}
+
+.btn-primary {
+  color: #fff;
+  background: linear-gradient(
+    180deg,
+    #ff5566 0%,
+    var(--mk-red) 55%,
+    var(--mk-red-dark) 100%
+  );
+  border: 3px solid #fff;
+  box-shadow:
+    0 0 0 3px var(--stroke),
+    0 6px 0 var(--mk-red-dark),
+    0 10px 18px rgba(13, 27, 42, 0.3),
+    inset 0 2px 0 rgba(255, 255, 255, 0.45);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: saturate(1.1);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow:
+    0 0 0 3px var(--stroke),
+    0 2px 0 var(--mk-red-dark),
+    0 4px 8px rgba(13, 27, 42, 0.3),
+    inset 0 2px 0 rgba(255, 255, 255, 0.4);
 }
 
 .btn-primary:disabled {
-  opacity: 0.5;
+  opacity: 0.55;
   cursor: not-allowed;
+  filter: grayscale(0.3);
 }
 
 .btn-secondary {
-  background: transparent;
-  color: var(--text-h);
-  border: 1px solid var(--border);
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-size: 16px;
-  font-family: var(--sans);
-  cursor: pointer;
+  color: var(--ink);
+  background: linear-gradient(180deg, #ffffff 0%, #e9eef5 100%);
+  border: 3px solid #fff;
+  box-shadow:
+    0 0 0 3px var(--stroke),
+    0 5px 0 #b8c2cf,
+    0 8px 14px rgba(13, 27, 42, 0.18),
+    inset 0 2px 0 rgba(255, 255, 255, 0.6);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.btn-secondary:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow:
+    0 0 0 3px var(--stroke),
+    0 2px 0 #b8c2cf,
+    inset 0 2px 0 rgba(255, 255, 255, 0.5);
 }
 
 .btn-secondary:disabled {
-  opacity: 0.5;
+  opacity: 0.55;
   cursor: not-allowed;
 }
 
+/* ===== Leaderboard section wrapper ===== */
+
 .leaderboard-section {
-  padding: 16px;
+  padding: 24px 16px;
 }
 
-.leaderboard {
-  list-style: none;
-  padding: 0;
-  margin: 0 auto;
-  max-width: 600px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.leaderboard-section h2 {
+  display: inline-block;
+  padding: 6px 22px;
+  background: var(--mk-yellow);
+  color: var(--ink);
+  border: 3px solid var(--stroke);
+  border-radius: 14px;
+  box-shadow:
+    0 4px 0 var(--mk-yellow-dark),
+    0 8px 14px rgba(13, 27, 42, 0.2);
+  /* checkered underline using a tiny inset gradient */
+  position: relative;
 }
 
-.leaderboard-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 12px 16px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  text-align: left;
-}
-
-.leaderboard-rank {
-  font-weight: 600;
-  color: var(--text-h);
-  min-width: 32px;
-}
-
-.leaderboard-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--code-bg);
-  object-fit: cover;
-}
-
-.leaderboard-name {
-  font-size: 18px;
-  color: var(--text-h);
-}
-
-.leaderboard-empty,
-.leaderboard-status {
-  padding: 32px 16px;
-  text-align: center;
-  color: var(--text);
-}
-
-.leaderboard-empty-hint {
-  margin-top: 8px;
-  color: var(--accent);
-}
-
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  z-index: 100;
-}
-
-.modal {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  box-shadow: var(--shadow);
-  padding: 24px;
-  width: 100%;
-  max-width: 520px;
-  max-height: 90vh;
-  overflow-y: auto;
-  text-align: left;
-}
-
-.modal h2 {
-  margin: 0 0 16px;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 16px;
-  border: none;
-  padding: 0;
-}
-
-.field > span,
-.field > legend {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-h);
-  padding: 0;
-}
-
-.field input[type="text"] {
-  font: inherit;
-  padding: 8px 12px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--bg);
-  color: var(--text-h);
-}
-
-.avatar-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.avatar-tile {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 8px;
-  border: 2px solid var(--border);
-  border-radius: 8px;
-  background: var(--bg);
-  cursor: pointer;
-  font: inherit;
-  color: var(--text-h);
-}
-
-.avatar-tile img {
-  width: 64px;
-  height: 64px;
-  object-fit: cover;
-  background: var(--code-bg);
-  border-radius: 6px;
-}
-
-.avatar-tile-selected {
-  border-color: var(--accent);
-  background: var(--accent-bg);
-}
-
-.form-error {
-  background: rgba(220, 38, 38, 0.1);
-  border: 1px solid rgba(220, 38, 38, 0.4);
-  color: #b91c1c;
-  padding: 8px 12px;
-  border-radius: 6px;
-  margin-bottom: 12px;
-  font-size: 14px;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 8px;
-}
+/* ===== Spinner (used inside primary button) ===== */
 
 .spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.4);
+  width: 18px;
+  height: 18px;
+  border: 3px solid rgba(255, 255, 255, 0.4);
   border-top-color: #fff;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
@@ -228,5 +171,14 @@
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 640px) {
+  .btn-primary,
+  .btn-secondary {
+    font-size: 16px;
+    padding: 12px 22px;
+    min-height: 48px;
   }
 }

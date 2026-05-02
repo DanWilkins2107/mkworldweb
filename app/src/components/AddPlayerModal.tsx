@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { CHARACTERS } from "../characters";
 import { addPlayer } from "../db/players";
+import "./AddPlayerModal.css";
 
 type Props = {
   onClose: () => void;
@@ -60,6 +61,7 @@ export function AddPlayerModal({ onClose }: Props) {
         aria-labelledby="add-player-title"
         onClick={(e) => e.stopPropagation()}
       >
+        <div className="modal-body">
         <h2 id="add-player-title">Add Player</h2>
         <form onSubmit={handleSubmit}>
           <label className="field">
@@ -136,6 +138,7 @@ export function AddPlayerModal({ onClose }: Props) {
             </button>
           </div>
         </form>
+        </div>
       </div>
     </div>
   );

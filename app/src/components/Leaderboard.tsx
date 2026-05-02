@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { subscribeToPlayers, type Player } from "../db/players";
+import "./Leaderboard.css";
 
 export function Leaderboard() {
   const [players, setPlayers] = useState<Player[] | null>(null);
@@ -25,8 +26,11 @@ export function Leaderboard() {
   return (
     <ol className="leaderboard">
       {players.map((p, i) => (
-        <li key={p.id} className="leaderboard-row">
-          <span className="leaderboard-rank">#{i + 1}</span>
+        <li
+          key={p.id}
+          className={`leaderboard-row rank-${i + 1}`}
+        >
+          <span className="leaderboard-rank">{i + 1}</span>
           <img
             className="leaderboard-avatar"
             src={`/avatars/${p.avatar}.png`}
