@@ -4,13 +4,13 @@ import { database } from "../firebase";
 export type Player = {
   id: string;
   name: string;
-  slackName: string | null;
+  slackName: string;
   avatar: string;
 };
 
 export type NewPlayer = {
   name: string;
-  slackName: string | null;
+  slackName: string;
   avatar: string;
 };
 
@@ -23,7 +23,7 @@ export function subscribeToPlayers(
   const unsubscribe = onValue(playersRef, (snapshot) => {
     const value = snapshot.val() as Record<
       string,
-      { name: string; slackName: string | null; avatar: string }
+      { name: string; slackName: string; avatar: string }
     > | null;
     if (!value) {
       callback([]);
@@ -33,7 +33,7 @@ export function subscribeToPlayers(
       .map(([id, v]) => ({
         id,
         name: v.name,
-        slackName: v.slackName ?? null,
+        slackName: v.slackName,
         avatar: v.avatar,
       }))
       .sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));

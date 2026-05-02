@@ -23,8 +23,9 @@ export function AddPlayerModal({ onClose }: Props) {
   }, [onClose, submitting]);
 
   const trimmedName = name.trim();
+  const trimmedSlack = slackName.trim();
   const nameValid = trimmedName.length >= 1 && trimmedName.length <= 50;
-  const slackValid = slackName.length <= 50;
+  const slackValid = trimmedSlack.length >= 1 && trimmedSlack.length <= 50;
   const canSubmit = nameValid && slackValid && avatar !== null && !submitting;
 
   async function handleSubmit(e: FormEvent) {
@@ -35,7 +36,7 @@ export function AddPlayerModal({ onClose }: Props) {
     try {
       await addPlayer({
         name: trimmedName,
-        slackName: slackName.trim() === "" ? null : slackName.trim(),
+        slackName: trimmedSlack,
         avatar,
       });
       onClose();
@@ -77,12 +78,13 @@ export function AddPlayerModal({ onClose }: Props) {
             />
           </label>
           <label className="field">
-            <span>Slack display name (optional)</span>
+            <span>Slack display name</span>
             <input
               type="text"
               value={slackName}
               onChange={(e) => setSlackName(e.target.value)}
               maxLength={50}
+              required
               disabled={submitting}
             />
           </label>

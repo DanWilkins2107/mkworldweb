@@ -9,8 +9,7 @@ function App() {
   return (
     <>
       <header className="site-header">
-        <h1>MkworldWeb</h1>
-        <p className="tagline">Mario Kart World leaderboard</p>
+        <h1>SoftKartMarioWire</h1>
       </header>
 
       <section className="actions">
@@ -24,7 +23,6 @@ function App() {
       </section>
 
       <section className="leaderboard-section">
-        <h2>Leaderboard</h2>
         <Leaderboard />
       </section>
 

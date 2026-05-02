@@ -25,19 +25,6 @@
   display: inline-block;
 }
 
-.tagline {
-  display: inline-block;
-  margin-top: 18px;
-  padding: 4px 14px;
-  background: var(--ink);
-  color: #fff;
-  border-radius: 999px;
-  font-weight: 600;
-  font-size: 14px;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-}
-
 /* ===== Action bar ===== */
 
 .actions {
@@ -140,20 +127,6 @@
 
 .leaderboard-section {
   padding: 24px 16px;
-}
-
-.leaderboard-section h2 {
-  display: inline-block;
-  padding: 6px 22px;
-  background: var(--mk-yellow);
-  color: var(--ink);
-  border: 3px solid var(--stroke);
-  border-radius: 14px;
-  box-shadow:
-    0 4px 0 var(--mk-yellow-dark),
-    0 8px 14px rgba(13, 27, 42, 0.2);
-  /* checkered underline using a tiny inset gradient */
-  position: relative;
 }
 
 /* ===== Spinner (used inside primary button) ===== */
