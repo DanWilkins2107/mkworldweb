@@ -51,3 +51,7 @@ export async function addPlayer(player: NewPlayer): Promise<void> {
     avatar: player.avatar,
   });
 }
+
+export async function clearAllPlayers(): Promise<void> {
+  await set(ref(database, PLAYERS_PATH), null);
+}

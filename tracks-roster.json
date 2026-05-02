@@ -1,0 +1,152 @@
+[
+  {
+    "slug": "mario-bros-circuit",
+    "displayName": "Mario Bros. Circuit",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Mario_Bros_Circuit.png"
+  },
+  {
+    "slug": "crown-city",
+    "displayName": "Crown City",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Crown_City.png"
+  },
+  {
+    "slug": "whistlestop-summit",
+    "displayName": "Whistlestop Summit",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Whistlestop_Summit.png"
+  },
+  {
+    "slug": "dk-spaceport",
+    "displayName": "DK Spaceport",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_DK_Spaceport.png"
+  },
+  {
+    "slug": "desert-hills",
+    "displayName": "Desert Hills",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Desert_Hills.png"
+  },
+  {
+    "slug": "shy-guy-bazaar",
+    "displayName": "Shy Guy Bazaar",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Shy_Guy_Bazaar.png"
+  },
+  {
+    "slug": "wario-stadium",
+    "displayName": "Wario Stadium",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Wario_Stadium.png"
+  },
+  {
+    "slug": "airship-fortress",
+    "displayName": "Airship Fortress",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Airship_Fortress.png"
+  },
+  {
+    "slug": "dk-pass",
+    "displayName": "DK Pass",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_DK_Pass.png"
+  },
+  {
+    "slug": "starview-peak",
+    "displayName": "Starview Peak",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Starview_Peak.png"
+  },
+  {
+    "slug": "sky-high-sundae",
+    "displayName": "Sky-High Sundae",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Sky-High_Sundae.png"
+  },
+  {
+    "slug": "wario-shipyard",
+    "displayName": "Wario Shipyard",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Wario_Shipyard.png"
+  },
+  {
+    "slug": "koopa-troopa-beach",
+    "displayName": "Koopa Troopa Beach",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Koopa_Troopa_Beach.png"
+  },
+  {
+    "slug": "faraway-oasis",
+    "displayName": "Faraway Oasis",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Faraway_Oasis.png"
+  },
+  {
+    "slug": "peach-beach",
+    "displayName": "Peach Beach",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Peach_Beach.png"
+  },
+  {
+    "slug": "salty-salty-speedway",
+    "displayName": "Salty Salty Speedway",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Salty_Salty_Speedway.png"
+  },
+  {
+    "slug": "dino-dino-jungle",
+    "displayName": "Dino Dino Jungle",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Dino_Dino_Jungle.png"
+  },
+  {
+    "slug": "great-question-block-ruins",
+    "displayName": "Great ? Block Ruins",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Great_Question_Block_Ruins.png"
+  },
+  {
+    "slug": "cheep-cheep-falls",
+    "displayName": "Cheep Cheep Falls",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Cheep_Cheep_Falls.png"
+  },
+  {
+    "slug": "dandelion-depths",
+    "displayName": "Dandelion Depths",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Dandelion_Depths.png"
+  },
+  {
+    "slug": "boo-cinema",
+    "displayName": "Boo Cinema",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Boo_Cinema.png"
+  },
+  {
+    "slug": "dry-bones-burnout",
+    "displayName": "Dry Bones Burnout",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Dry_Bones_Burnout.png"
+  },
+  {
+    "slug": "moo-moo-meadows",
+    "displayName": "Moo Moo Meadows",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Moo_Moo_Meadows.png"
+  },
+  {
+    "slug": "choco-mountain",
+    "displayName": "Choco Mountain",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Choco_Mountain.png"
+  },
+  {
+    "slug": "toads-factory",
+    "displayName": "Toad's Factory",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Toads_Factory.png"
+  },
+  {
+    "slug": "bowsers-castle",
+    "displayName": "Bowser's Castle",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Bowsers_Castle.png"
+  },
+  {
+    "slug": "acorn-heights",
+    "displayName": "Acorn Heights",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Acorn_Heights.png"
+  },
+  {
+    "slug": "mario-circuit",
+    "displayName": "Mario Circuit",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Mario_Circuit.png"
+  },
+  {
+    "slug": "peach-stadium",
+    "displayName": "Peach Stadium",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Peach_Stadium.png"
+  },
+  {
+    "slug": "rainbow-road",
+    "displayName": "Rainbow Road",
+    "sourceUrl": "https://www.mariowiki.com/Special:FilePath/MKWorld_Icon_Rainbow_Road.png"
+  }
+]

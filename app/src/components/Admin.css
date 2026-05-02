@@ -1,0 +1,106 @@
+.admin-panel {
+  padding: 24px 16px;
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.admin-back {
+  display: inline-block;
+  margin-bottom: 16px;
+  font-family: var(--display);
+  color: var(--ink);
+  text-decoration: none;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 3px solid var(--stroke);
+  border-radius: 12px;
+  letter-spacing: 0.5px;
+}
+
+.admin-back:hover {
+  background: #fff;
+}
+
+.admin-card {
+  background: linear-gradient(180deg, #ffffff 0%, #f3f9ff 100%);
+  border: 3px solid var(--stroke);
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow:
+    0 5px 0 rgba(13, 27, 42, 0.18),
+    0 10px 18px rgba(13, 27, 42, 0.18);
+}
+
+.admin-card h2 {
+  font-family: var(--display);
+  margin-top: 0;
+  color: var(--ink);
+}
+
+.admin-card p {
+  color: var(--ink);
+  margin-bottom: 18px;
+}
+
+.btn-danger {
+  font-family: var(--display);
+  font-weight: 400;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-size: 18px;
+  padding: 14px 28px;
+  border-radius: 16px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 140px;
+  min-height: 52px;
+  color: #fff;
+  background: linear-gradient(180deg, #ff5566 0%, #c80018 55%, #8a0010 100%);
+  border: 3px solid #fff;
+  box-shadow:
+    0 0 0 3px var(--stroke),
+    0 6px 0 #8a0010,
+    0 10px 18px rgba(13, 27, 42, 0.3),
+    inset 0 2px 0 rgba(255, 255, 255, 0.45);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+  transition: transform 0.08s ease, filter 0.15s ease;
+}
+
+.btn-danger:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: saturate(1.1);
+}
+
+.btn-danger:active:not(:disabled) {
+  transform: translateY(3px);
+}
+
+.btn-danger:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  filter: grayscale(0.3);
+}
+
+.admin-link {
+  position: fixed;
+  bottom: 12px;
+  right: 16px;
+  font-size: 12px;
+  font-family: var(--display);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(13, 27, 42, 0.55);
+  text-decoration: none;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+}
+
+.admin-link:hover {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.8);
+}

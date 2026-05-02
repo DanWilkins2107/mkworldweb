@@ -1,10 +1,16 @@
 import { useState } from "react";
 import { AddPlayerModal } from "./components/AddPlayerModal";
 import { Leaderboard } from "./components/Leaderboard";
+import { Admin } from "./components/Admin";
 import "./App.css";
+import "./components/Admin.css";
 
 function App() {
   const [modalOpen, setModalOpen] = useState(false);
+
+  if (window.location.pathname.startsWith("/admin")) {
+    return <Admin />;
+  }
 
   return (
     <>
@@ -27,6 +33,8 @@ function App() {
       </section>
 
       {modalOpen && <AddPlayerModal onClose={() => setModalOpen(false)} />}
+
+      <a href="/admin" className="admin-link">Admin</a>
     </>
   );
 }

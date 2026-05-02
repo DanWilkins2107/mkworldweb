@@ -32,6 +32,7 @@ export const CHARACTERS: Character[] = [
   { slug: "wiggler", displayName: "Wiggler" },
   { slug: "hammer-bro", displayName: "Hammer Bro" },
   { slug: "sidestepper", displayName: "Sidestepper" },
+  { slug: "monty-mole", displayName: "Monty Mole" },
   { slug: "cheep-cheep", displayName: "Cheep Cheep" },
   { slug: "pokey", displayName: "Pokey" },
   { slug: "stingby", displayName: "Stingby" },
@@ -42,11 +43,13 @@ export const CHARACTERS: Character[] = [
   { slug: "chargin-chuck", displayName: "Chargin' Chuck" },
   { slug: "cataquack", displayName: "Cataquack" },
   { slug: "coin-coffer", displayName: "Coin Coffer" },
+  { slug: "conkdor", displayName: "Conkdor" },
   { slug: "dolphin", displayName: "Dolphin" },
   { slug: "fish-bone", displayName: "Fish Bone" },
   { slug: "peepa", displayName: "Peepa" },
   { slug: "pianta", displayName: "Pianta" },
   { slug: "rocky-wrench", displayName: "Rocky Wrench" },
+  { slug: "spike", displayName: "Spike" },
   { slug: "swoop", displayName: "Swoop" },
 ];
 
