@@ -199,7 +199,8 @@ function WeekView({
   for (const p of players) playerById.set(p.id, p);
 
   const weekLabel = week === currentWeek ? "This week" : `Week ${week}`;
-  const canEdit = week === currentWeek && tournamentStatus === "in-progress";
+  // Allow add/edit/remove on any played week (tournament is in-progress or finished by this point).
+  const canEdit = true;
 
   async function handleRemove(playerId: string, name: string) {
     if (!window.confirm(`Remove ${name}'s time for this week?`)) return;
@@ -290,6 +291,18 @@ function WeekView({
             />
             <span className="leaderboard-name">{player.name}</span>
             <span className="leaderboard-time leaderboard-time-empty">—</span>
+            {canEdit && (
+              <span className="leaderboard-row-actions">
+                <button
+                  type="button"
+                  className="leaderboard-row-btn"
+                  onClick={() => setEditPlayerId(player.id)}
+                  aria-label={`Add ${player.name}'s time`}
+                >
+                  Add
+                </button>
+              </span>
+            )}
           </li>
         ))}
       </ol>
