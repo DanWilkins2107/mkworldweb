@@ -3,10 +3,12 @@ import { subscribeToPlayers, type Player } from "../db/players";
 import {
   computeOverallStandings,
   computeWeekRanking,
+  deleteTime,
   formatTime,
   useTimes,
 } from "../db/times";
 import { useTournament } from "../db/tournament";
+import { SubmitTimeModal } from "./SubmitTimeModal";
 import "./Leaderboard.css";
 
 type View = "week" | "overall";
@@ -40,6 +42,14 @@ export function Leaderboard() {
       <div className="leaderboard-empty">
         <p>No players yet — add the first one!</p>
         <p className="leaderboard-empty-hint">↑ Use the “+ Add Player” button above.</p>
+      </div>
+    );
+  }
+
+  if (tournament.status === "not-started") {
+    return (
+      <div className="leaderboard-container">
+        <PlayerList players={players} />
       </div>
     );
   }
@@ -84,6 +94,26 @@ export function Leaderboard() {
         />
       )}
     </div>
+  );
+}
+
+function PlayerList({ players }: { players: Player[] }) {
+  return (
+    <ol className="leaderboard">
+      {players.map((player, i) => (
+        <li key={player.id} className="leaderboard-row">
+          <span className="leaderboard-rank">{i + 1}</span>
+          <img
+            className="leaderboard-avatar"
+            src={`/avatars/${player.avatar}.png`}
+            alt={player.avatar}
+            width={48}
+            height={48}
+          />
+          <span className="leaderboard-name">{player.name}</span>
+        </li>
+      ))}
+    </ol>
   );
 }
 
@@ -148,6 +178,9 @@ function WeekView({
   selectedWeek: number | null;
   setSelectedWeek: (n: number) => void;
 }) {
+  const [editPlayerId, setEditPlayerId] = useState<string | null>(null);
+  const [removingId, setRemovingId] = useState<string | null>(null);
+
   if (tournamentStatus === "not-started" || currentWeek === 0) {
     return (
       <div className="leaderboard-empty">
@@ -166,6 +199,17 @@ function WeekView({
   for (const p of players) playerById.set(p.id, p);
 
   const weekLabel = week === currentWeek ? "This week" : `Week ${week}`;
+  const canEdit = week === currentWeek && tournamentStatus === "in-progress";
+
+  async function handleRemove(playerId: string, name: string) {
+    if (!window.confirm(`Remove ${name}'s time for this week?`)) return;
+    setRemovingId(playerId);
+    try {
+      await deleteTime(week, playerId);
+    } finally {
+      setRemovingId(null);
+    }
+  }
 
   return (
     <>
@@ -209,6 +253,28 @@ function WeekView({
               />
               <span className="leaderboard-name">{player.name}</span>
               <span className="leaderboard-time">{formatTime(row.ms)}</span>
+              {canEdit && (
+                <span className="leaderboard-row-actions">
+                  <button
+                    type="button"
+                    className="leaderboard-row-btn"
+                    onClick={() => setEditPlayerId(player.id)}
+                    aria-label={`Edit ${player.name}'s time`}
+                    disabled={removingId === player.id}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    className="leaderboard-row-btn leaderboard-row-btn-danger"
+                    onClick={() => handleRemove(player.id, player.name)}
+                    aria-label={`Remove ${player.name}'s time`}
+                    disabled={removingId === player.id}
+                  >
+                    {removingId === player.id ? "…" : "Remove"}
+                  </button>
+                </span>
+              )}
             </li>
           );
         })}
@@ -227,6 +293,16 @@ function WeekView({
           </li>
         ))}
       </ol>
+
+      {editPlayerId !== null && (
+        <SubmitTimeModal
+          week={week}
+          players={players}
+          existingTimes={weekTimes}
+          initialPlayerId={editPlayerId}
+          onClose={() => setEditPlayerId(null)}
+        />
+      )}
     </>
   );
 }

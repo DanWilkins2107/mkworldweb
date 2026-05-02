@@ -14,6 +14,7 @@ type Props = {
   players: Player[];
   existingTimes: WeekTimes;
   onClose: () => void;
+  initialPlayerId?: string;
 };
 
 function maskInput(raw: string): string {
@@ -29,9 +30,19 @@ function maskInput(raw: string): string {
   return `${m}:${rest.slice(0, 2)}.${rest.slice(2)}`;
 }
 
-export function SubmitTimeModal({ week, players, existingTimes, onClose }: Props) {
-  const [playerId, setPlayerId] = useState<string>("");
-  const [timeText, setTimeText] = useState<string>("");
+export function SubmitTimeModal({
+  week,
+  players,
+  existingTimes,
+  onClose,
+  initialPlayerId,
+}: Props) {
+  const [playerId, setPlayerId] = useState<string>(initialPlayerId ?? "");
+  const [timeText, setTimeText] = useState<string>(() =>
+    initialPlayerId && existingTimes[initialPlayerId] !== undefined
+      ? formatTime(existingTimes[initialPlayerId])
+      : "",
+  );
   const [submitting, setSubmitting] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);

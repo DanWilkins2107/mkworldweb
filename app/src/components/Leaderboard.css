@@ -313,3 +313,46 @@
     font-size: 18px;
   }
 }
+
+/* ===== Row action buttons (Edit / Remove) ===== */
+
+.leaderboard-row-actions {
+  display: inline-flex;
+  gap: 6px;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+.leaderboard-row-btn {
+  font-family: var(--display);
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border-radius: 10px;
+  border: 2px solid var(--stroke);
+  background: #fff;
+  color: var(--ink);
+  cursor: pointer;
+  transition: transform 0.08s ease, background 0.12s ease;
+}
+
+.leaderboard-row-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: #f3f9ff;
+}
+
+.leaderboard-row-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.leaderboard-row-btn-danger {
+  background: var(--mk-red, #e60012);
+  color: #fff;
+  border-color: var(--stroke);
+}
+
+.leaderboard-row-btn-danger:hover:not(:disabled) {
+  background: #c80018;
+}
