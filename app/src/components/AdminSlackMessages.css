@@ -48,3 +48,31 @@
   word-break: break-word;
   background: #fff;
 }
+
+.slack-week-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.slack-week-header h2 {
+  margin: 0;
+}
+
+.slack-week-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.slack-week-label {
+  font-family: var(--display);
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  color: var(--ink);
+  min-width: 130px;
+  text-align: center;
+}

@@ -3,10 +3,12 @@ import { clearAllPlayers } from "../db/players";
 import {
   advanceWeek,
   finishTournament,
+  pickNextWeekTrack,
   resetTournament,
   startTournament,
   useTournament,
 } from "../db/tournament";
+import { TRACKS } from "../tracks";
 import { AdminSlackMessages } from "./AdminSlackMessages";
 import "./Admin.css";
 
@@ -92,26 +94,41 @@ export function Admin() {
 
           {tournament !== null &&
             tournament.status === "in-progress" &&
-            tournament.currentWeek < 30 && (
-              <>
-                <p>
-                  Currently on week {tournament.currentWeek} of 30. The next week's
-                  track will be picked at random.
-                </p>
-                <button
-                  type="button"
-                  className="btn-secondary"
-                  onClick={() => runTournamentAction(advanceWeek)}
-                  disabled={tournamentBusy}
-                >
-                  {tournamentBusy ? (
-                    <span className="spinner" />
+            tournament.currentWeek < 30 &&
+            (() => {
+              const next = tournament.currentWeek + 1;
+              const nextWeek = tournament.weeks[String(next)];
+              const nextTrack = nextWeek
+                ? TRACKS.find((t) => t.slug === nextWeek.trackSlug)
+                : null;
+              return (
+                <>
+                  <p>Currently on week {tournament.currentWeek} of 30.</p>
+                  {nextTrack ? (
+                    <>
+                      <p>Week {next}'s track is set: <strong>{nextTrack.displayName}</strong>.</p>
+                      <button
+                        type="button"
+                        className="btn-secondary"
+                        onClick={() => runTournamentAction(advanceWeek)}
+                        disabled={tournamentBusy}
+                      >
+                        {tournamentBusy ? <span className="spinner" /> : `Advance to week ${next}`}
+                      </button>
+                    </>
                   ) : (
-                    `Advance to week ${tournament.currentWeek + 1}`
+                    <button
+                      type="button"
+                      className="btn-secondary"
+                      onClick={() => runTournamentAction(pickNextWeekTrack)}
+                      disabled={tournamentBusy}
+                    >
+                      {tournamentBusy ? <span className="spinner" /> : `Pick week ${next}'s track`}
+                    </button>
                   )}
-                </button>
-              </>
-            )}
+                </>
+              );
+            })()}
 
           {tournament !== null &&
             tournament.status === "in-progress" &&

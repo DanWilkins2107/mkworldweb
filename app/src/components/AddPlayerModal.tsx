@@ -84,6 +84,7 @@ export function AddPlayerModal({ onClose }: Props) {
               value={slackName}
               onChange={(e) => setSlackName(e.target.value)}
               maxLength={50}
+              placeholder="@Joe Bloggs"
               required
               disabled={submitting}
             />

@@ -1,4 +1,4 @@
-import { get, onValue, ref, set, update } from "firebase/database";
+import { get, onValue, ref, set } from "firebase/database";
 import { useEffect, useState } from "react";
 import { database } from "../firebase";
 import { TRACKS } from "../tracks";
@@ -63,6 +63,24 @@ export async function startTournament(): Promise<void> {
   });
 }
 
+export async function pickNextWeekTrack(): Promise<void> {
+  const tRef = ref(database, TOURNAMENT_PATH);
+  const snapshot = await get(tRef);
+  const current = normalize(snapshot.val() as RawTournament);
+  if (current.status !== "in-progress") {
+    throw new Error("Tournament is not in progress.");
+  }
+  if (current.currentWeek >= 30) {
+    throw new Error("Tournament is already on its final week.");
+  }
+  const nextWeek = current.currentWeek + 1;
+  if (current.weeks[String(nextWeek)]) {
+    throw new Error(`Week ${nextWeek}'s track has already been picked.`);
+  }
+  const trackSlug = pickRandomTrack(usedTrackSlugs(current));
+  await set(ref(database, `${TOURNAMENT_PATH}/weeks/${nextWeek}`), { trackSlug });
+}
+
 export async function advanceWeek(): Promise<void> {
   const tRef = ref(database, TOURNAMENT_PATH);
   const snapshot = await get(tRef);
@@ -73,12 +91,11 @@ export async function advanceWeek(): Promise<void> {
   if (current.currentWeek >= 30) {
     throw new Error("Tournament is already on its final week.");
   }
-  const trackSlug = pickRandomTrack(usedTrackSlugs(current));
   const nextWeek = current.currentWeek + 1;
-  await update(tRef, {
-    currentWeek: nextWeek,
-    [`weeks/${nextWeek}`]: { trackSlug },
-  });
+  if (!current.weeks[String(nextWeek)]) {
+    throw new Error(`Week ${nextWeek}'s track has not been picked yet.`);
+  }
+  await set(ref(database, `${TOURNAMENT_PATH}/currentWeek`), nextWeek);
 }
 
 export async function resetTournament(): Promise<void> {
