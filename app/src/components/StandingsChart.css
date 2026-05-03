@@ -1,0 +1,65 @@
+.standings-chart {
+  margin-top: 16px;
+  background: linear-gradient(180deg, #ffffff 0%, #f3f9ff 100%);
+  border: 3px solid var(--stroke);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow:
+    0 5px 0 rgba(13, 27, 42, 0.18),
+    0 10px 18px rgba(13, 27, 42, 0.18);
+}
+
+.standings-chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.standings-chart-header h3 {
+  font-family: var(--display);
+  margin: 0;
+  font-size: 18px;
+  color: var(--ink);
+  letter-spacing: 0.5px;
+}
+
+.standings-chart-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 4px;
+  background: rgba(13, 27, 42, 0.08);
+  border: 2px solid var(--stroke);
+  border-radius: 999px;
+}
+
+.standings-chart-tab {
+  font-family: var(--display);
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.standings-chart-tab:hover {
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.standings-chart-tab-active {
+  background: #fff;
+  border-color: var(--stroke);
+}
+
+.standings-chart-empty {
+  color: var(--ink);
+  opacity: 0.7;
+  font-size: 14px;
+  margin: 0;
+}

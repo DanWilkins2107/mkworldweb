@@ -6,13 +6,16 @@ import {
   deleteTime,
   formatTime,
   useTimes,
+  type AllTimes,
 } from "../db/times";
 import { useTournament } from "../db/tournament";
 import { TRACKS } from "../tracks";
+import { EditPlayerModal } from "./EditPlayerModal";
+import { StandingsChart } from "./StandingsChart";
 import { SubmitTimeModal } from "./SubmitTimeModal";
 import "./Leaderboard.css";
 
-type View = "week" | "overall";
+type View = "week" | "overall" | "graph";
 
 export function Leaderboard() {
   const [players, setPlayers] = useState<Player[] | null>(null);
@@ -20,6 +23,7 @@ export function Leaderboard() {
   const times = useTimes();
   const [view, setView] = useState<View>("week");
   const [selectedWeekOverride, setSelectedWeekOverride] = useState<number | null>(null);
+  const [editPlayer, setEditPlayer] = useState<Player | null>(null);
 
   useEffect(() => {
     const unsubscribe = subscribeToPlayers(setPlayers);
@@ -50,9 +54,24 @@ export function Leaderboard() {
   if (tournament.status === "not-started") {
     return (
       <div className="leaderboard-container">
-        <PlayerList players={players} />
+        <PlayerList players={players} onEditPlayer={setEditPlayer} />
+        {editPlayer && (
+          <EditPlayerModal
+            player={editPlayer}
+            onClose={() => setEditPlayer(null)}
+          />
+        )}
       </div>
     );
+  }
+
+  // For overall standings + the graph: include weeks up to (but not including)
+  // the current week when in-progress; include all 30 when finished.
+  const lastIncludedWeek =
+    tournament.status === "finished" ? 30 : tournament.currentWeek - 1;
+  const completedTimes: AllTimes = {};
+  for (const [w, wTimes] of Object.entries(times)) {
+    if (Number(w) <= lastIncludedWeek) completedTimes[w] = wTimes;
   }
 
   return (
@@ -80,11 +99,28 @@ export function Leaderboard() {
         >
           Overall
         </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={view === "graph"}
+          className={
+            "leaderboard-tab" + (view === "graph" ? " leaderboard-tab-active" : "")
+          }
+          onClick={() => setView("graph")}
+        >
+          Graph
+        </button>
       </div>
 
-      {view === "overall" ? (
-        <OverallView players={players} times={times} />
-      ) : (
+      {view === "overall" && (
+        <OverallView
+          players={players}
+          times={completedTimes}
+          throughWeek={lastIncludedWeek}
+          onEditPlayer={setEditPlayer}
+        />
+      )}
+      {view === "week" && (
         <WeekView
           players={players}
           times={times}
@@ -92,6 +128,21 @@ export function Leaderboard() {
           currentWeek={tournament.currentWeek}
           selectedWeek={selectedWeek}
           setSelectedWeek={setSelectedWeekOverride}
+          onEditPlayer={setEditPlayer}
+        />
+      )}
+      {view === "graph" && (
+        <StandingsChart
+          players={players}
+          times={completedTimes}
+          throughWeek={lastIncludedWeek}
+        />
+      )}
+
+      {editPlayer && (
+        <EditPlayerModal
+          player={editPlayer}
+          onClose={() => setEditPlayer(null)}
         />
       )}
     </div>
@@ -117,32 +168,61 @@ function WeekTrackInfo({ week }: { week: number }) {
   );
 }
 
-function PlayerList({ players }: { players: Player[] }) {
+function PlayerList({
+  players,
+  onEditPlayer,
+}: {
+  players: Player[];
+  onEditPlayer: (p: Player) => void;
+}) {
   return (
     <ol className="leaderboard">
       {players.map((player, i) => (
         <li key={player.id} className="leaderboard-row">
           <span className="leaderboard-rank">{i + 1}</span>
-          <img
-            className="leaderboard-avatar"
-            src={`/avatars/${player.avatar}.png`}
-            alt={player.avatar}
-            width={48}
-            height={48}
-          />
-          <span className="leaderboard-name">{player.name}</span>
+          <PlayerButton player={player} onClick={() => onEditPlayer(player)} />
         </li>
       ))}
     </ol>
   );
 }
 
+function PlayerButton({
+  player,
+  onClick,
+}: {
+  player: Player;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      className="leaderboard-player"
+      onClick={onClick}
+      aria-label={`Edit ${player.name}`}
+    >
+      <img
+        className="leaderboard-avatar"
+        src={`/avatars/${player.avatar}.png`}
+        alt={player.avatar}
+        width={48}
+        height={48}
+      />
+      <span className="leaderboard-name">{player.name}</span>
+    </button>
+  );
+}
+
 function OverallView({
   players,
   times,
+  throughWeek,
+  onEditPlayer,
 }: {
   players: Player[];
   times: Record<string, Record<string, number>>;
+  throughWeek: number;
+  onEditPlayer: (p: Player) => void;
 }) {
   const playerById = useMemo(() => {
     const map = new Map<string, Player>();
@@ -156,22 +236,20 @@ function OverallView({
   );
 
   return (
-    <ol className="leaderboard">
-      {standings.map((row, i) => {
+    <>
+      <p className="leaderboard-through">
+        {throughWeek > 0
+          ? `Standings through week ${throughWeek}.`
+          : "No completed weeks yet."}
+      </p>
+      <ol className="leaderboard">
+      {standings.map((row) => {
         const player = playerById.get(row.playerId);
         if (!player) return null;
-        const rank = i + 1;
         return (
-          <li key={player.id} className={`leaderboard-row rank-${rank}`}>
-            <span className="leaderboard-rank">{rank}</span>
-            <img
-              className="leaderboard-avatar"
-              src={`/avatars/${player.avatar}.png`}
-              alt={player.avatar}
-              width={48}
-              height={48}
-            />
-            <span className="leaderboard-name">{player.name}</span>
+          <li key={player.id} className={`leaderboard-row rank-${row.rank}`}>
+            <span className="leaderboard-rank">{row.rank}</span>
+            <PlayerButton player={player} onClick={() => onEditPlayer(player)} />
             <span className="leaderboard-points">
               <span className="leaderboard-points-value">{row.totalPoints}</span>
               <span className="leaderboard-points-label">pts</span>
@@ -179,7 +257,8 @@ function OverallView({
           </li>
         );
       })}
-    </ol>
+      </ol>
+    </>
   );
 }
 
@@ -190,6 +269,7 @@ function WeekView({
   currentWeek,
   selectedWeek,
   setSelectedWeek,
+  onEditPlayer,
 }: {
   players: Player[];
   times: Record<string, Record<string, number>>;
@@ -197,6 +277,7 @@ function WeekView({
   currentWeek: number;
   selectedWeek: number | null;
   setSelectedWeek: (n: number) => void;
+  onEditPlayer: (p: Player) => void;
 }) {
   const [editPlayerId, setEditPlayerId] = useState<string | null>(null);
   const [removingId, setRemovingId] = useState<string | null>(null);
@@ -211,7 +292,8 @@ function WeekView({
 
   const week = selectedWeek ?? currentWeek;
   const weekTimes = times[String(week)] ?? {};
-  const ranking = computeWeekRanking(weekTimes);
+  const validIds = new Set(players.map((p) => p.id));
+  const ranking = computeWeekRanking(weekTimes, validIds);
   const rankedIds = new Set(ranking.map((r) => r.playerId));
   const unranked = players.filter((p) => !rankedIds.has(p.id));
 
@@ -266,14 +348,7 @@ function WeekView({
               className={`leaderboard-row rank-${row.rank}`}
             >
               <span className="leaderboard-rank">{row.rank}</span>
-              <img
-                className="leaderboard-avatar"
-                src={`/avatars/${player.avatar}.png`}
-                alt={player.avatar}
-                width={48}
-                height={48}
-              />
-              <span className="leaderboard-name">{player.name}</span>
+              <PlayerButton player={player} onClick={() => onEditPlayer(player)} />
               <span className="leaderboard-time">{formatTime(row.ms)}</span>
               {canEdit && (
                 <span className="leaderboard-row-actions">
@@ -303,14 +378,7 @@ function WeekView({
         {unranked.map((player) => (
           <li key={player.id} className="leaderboard-row leaderboard-row-unranked">
             <span className="leaderboard-rank leaderboard-rank-empty">—</span>
-            <img
-              className="leaderboard-avatar"
-              src={`/avatars/${player.avatar}.png`}
-              alt={player.avatar}
-              width={48}
-              height={48}
-            />
-            <span className="leaderboard-name">{player.name}</span>
+            <PlayerButton player={player} onClick={() => onEditPlayer(player)} />
             <span className="leaderboard-time leaderboard-time-empty">—</span>
             {canEdit && (
               <span className="leaderboard-row-actions">

@@ -201,6 +201,32 @@
   font-size: 22px;
 }
 
+.leaderboard-player {
+  display: inline-flex;
+  align-items: center;
+  gap: 18px;
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  padding: 4px 6px;
+  margin: -4px -6px;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  transition: background 0.12s ease, transform 0.08s ease;
+}
+
+.leaderboard-player:hover {
+  background: rgba(13, 27, 42, 0.06);
+}
+
+.leaderboard-player:active {
+  transform: translateY(1px);
+}
+
 .leaderboard-avatar {
   width: 56px;
   height: 56px;
@@ -355,4 +381,15 @@
 
 .leaderboard-row-btn-danger:hover:not(:disabled) {
   background: #c80018;
+}
+
+.leaderboard-through {
+  margin: 0 auto 8px;
+  max-width: 680px;
+  text-align: center;
+  font-family: var(--display);
+  font-size: 14px;
+  color: var(--ink);
+  opacity: 0.7;
+  letter-spacing: 0.4px;
 }

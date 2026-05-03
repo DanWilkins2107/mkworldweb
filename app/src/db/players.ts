@@ -1,4 +1,4 @@
-import { onValue, push, ref, set } from "firebase/database";
+import { onValue, push, ref, set, update } from "firebase/database";
 import { database } from "../firebase";
 
 export type Player = {
@@ -50,6 +50,13 @@ export async function addPlayer(player: NewPlayer): Promise<void> {
     slackName: player.slackName,
     avatar: player.avatar,
   });
+}
+
+export async function updatePlayer(
+  id: string,
+  fields: Partial<Pick<Player, "slackName" | "avatar">>,
+): Promise<void> {
+  await update(ref(database, `${PLAYERS_PATH}/${id}`), fields);
 }
 
 export async function clearAllPlayers(): Promise<void> {

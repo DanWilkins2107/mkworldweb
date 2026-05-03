@@ -59,6 +59,10 @@ export async function deleteTime(
   await remove(ref(database, `${TIMES_PATH}/${week}/${playerId}`));
 }
 
+export async function clearAllTimes(): Promise<void> {
+  await remove(ref(database, TIMES_PATH));
+}
+
 export function formatTime(ms: number): string {
   const totalMs = Math.max(0, Math.floor(ms));
   const minutes = Math.floor(totalMs / 60_000);
@@ -106,9 +110,14 @@ function pointsForRank(rank: number): number {
   return MKWII_POINTS[idx];
 }
 
-export function computeWeekRanking(weekTimes: WeekTimes): WeekRow[] {
+export function computeWeekRanking(
+  weekTimes: WeekTimes,
+  validIds?: Set<string>,
+): WeekRow[] {
   const entries = Object.entries(weekTimes)
-    .filter(([, ms]) => typeof ms === "number")
+    .filter(([pid, ms]) =>
+      typeof ms === "number" && (!validIds || validIds.has(pid)),
+    )
     .sort((a, b) => {
       if (a[1] !== b[1]) return a[1] - b[1];
       return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0;
@@ -130,28 +139,53 @@ export function computeWeekRanking(weekTimes: WeekTimes): WeekRow[] {
 export function computeOverallStandings(
   times: AllTimes,
   playerIds: string[],
-): { playerId: string; totalPoints: number; weeksPlayed: number }[] {
+): { playerId: string; totalPoints: number; weeksPlayed: number; rank: number }[] {
   const totals = new Map<string, { totalPoints: number; weeksPlayed: number }>();
   for (const pid of playerIds) {
     totals.set(pid, { totalPoints: 0, weeksPlayed: 0 });
   }
 
+  const validIds = new Set(playerIds);
   for (const weekTimes of Object.values(times)) {
     if (!weekTimes) continue;
-    const rows = computeWeekRanking(weekTimes);
+    const rows = computeWeekRanking(weekTimes, validIds);
     for (const row of rows) {
       const cur = totals.get(row.playerId);
-      if (!cur) continue; // ignore times for unknown players
+      if (!cur) continue; // unreachable now thanks to validIds, but keep defensive
       cur.totalPoints += row.points;
       cur.weeksPlayed += 1;
     }
   }
 
-  return Array.from(totals.entries())
+  const sorted = Array.from(totals.entries())
     .map(([playerId, v]) => ({ playerId, ...v }))
     .sort((a, b) => {
       if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
-      if (b.weeksPlayed !== a.weeksPlayed) return b.weeksPlayed - a.weeksPlayed;
       return a.playerId < b.playerId ? -1 : a.playerId > b.playerId ? 1 : 0;
     });
+
+  let lastPts: number | null = null;
+  let lastRank = 0;
+  return sorted.map((row, i) => {
+    const rank = lastPts !== null && row.totalPoints === lastPts ? lastRank : i + 1;
+    lastPts = row.totalPoints;
+    lastRank = rank;
+    return { ...row, rank };
+  });
+}
+
+export function getCompletedWeeks(
+  times: AllTimes,
+  playerIds: string[],
+): number[] {
+  if (playerIds.length === 0) return [];
+  const completed: number[] = [];
+  for (let w = 1; w <= 30; w++) {
+    const weekTimes = times[String(w)];
+    if (!weekTimes) continue;
+    if (playerIds.every((id) => weekTimes[id] !== undefined)) {
+      completed.push(w);
+    }
+  }
+  return completed;
 }

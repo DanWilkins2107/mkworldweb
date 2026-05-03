@@ -4,7 +4,7 @@
       ".read": true,
       ".write": "!newData.exists()",
       "$id": {
-        ".write": "!data.exists() && newData.exists()",
+        ".write": "newData.exists()",
         ".validate": "newData.hasChildren(['name', 'slackName', 'avatar'])",
         "name": {
           ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 50"
@@ -46,6 +46,7 @@
     },
     "times": {
       ".read": true,
+      ".write": "!newData.exists()",
       "$week": {
         ".write": "$week.matches(/^([1-9]|[12][0-9]|30)$/)",
         "$playerId": {

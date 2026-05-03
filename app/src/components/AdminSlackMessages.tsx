@@ -91,7 +91,7 @@ function buildResults(
   trackName: string,
   url: string,
   rankedRows: { player: Player; ms: number; rank: number; points: number }[],
-  overall: { player: Player; totalPoints: number }[],
+  overall: { player: Player; totalPoints: number; rank: number }[],
 ): string {
   const lines = [`*Week ${week} results — ${trackName}*`, ""];
   if (rankedRows.length === 0) {
@@ -105,9 +105,9 @@ function buildResults(
   }
   if (overall.length > 0) {
     lines.push("", "*Overall standings*");
-    overall.forEach((row, i) => {
-      lines.push(`${i + 1}. ${whoFor(row.player)} — ${row.totalPoints} pts`);
-    });
+    for (const row of overall) {
+      lines.push(`${row.rank}. ${whoFor(row.player)} — ${row.totalPoints} pts`);
+    }
   }
   lines.push("", `Visit ${url} for the full leaderboard.`);
   return lines.join("\n");
@@ -234,8 +234,9 @@ export function AdminSlackMessages() {
   const url = window.location.origin;
 
   const playerById = new Map(players.map((p) => [p.id, p]));
+  const validIds = new Set(players.map((p) => p.id));
   const weekTimes = times[String(selectedWeek)] ?? {};
-  const ranking = computeWeekRanking(weekTimes);
+  const ranking = computeWeekRanking(weekTimes, validIds);
   const rankedRows = ranking
     .map((r) => {
       const player = playerById.get(r.playerId);
@@ -256,7 +257,7 @@ export function AdminSlackMessages() {
   )
     .map((s) => {
       const player = playerById.get(s.playerId);
-      return player ? { player, totalPoints: s.totalPoints } : null;
+      return player ? { player, totalPoints: s.totalPoints, rank: s.rank } : null;
     })
     .filter((r): r is NonNullable<typeof r> => r !== null);
 

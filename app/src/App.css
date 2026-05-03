@@ -129,6 +129,84 @@
   padding: 24px 16px;
 }
 
+/* ===== Rules dropdown ===== */
+
+.rules-section {
+  padding: 0 16px 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.rules {
+  width: 100%;
+  max-width: 640px;
+  background: #fff;
+  border: 3px solid var(--stroke);
+  border-radius: 16px;
+  box-shadow: 0 4px 0 #b8c2cf, 0 8px 14px rgba(13, 27, 42, 0.15);
+  overflow: hidden;
+}
+
+.rules > summary {
+  font-family: var(--display);
+  font-size: 20px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink);
+  padding: 14px 20px;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rules > summary::-webkit-details-marker {
+  display: none;
+}
+
+.rules > summary::after {
+  content: "▾";
+  font-size: 16px;
+  transition: transform 0.15s ease;
+}
+
+.rules[open] > summary::after {
+  transform: rotate(180deg);
+}
+
+.rules-body {
+  padding: 8px 20px 20px;
+  border-top: 2px solid rgba(13, 27, 42, 0.1);
+  font-family: var(--body, inherit);
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+.rules-group + .rules-group {
+  margin-top: 16px;
+}
+
+.rules-group h3 {
+  font-family: var(--display);
+  font-size: 16px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin: 12px 0 6px;
+  color: var(--mk-red-dark);
+}
+
+.rules-group ul {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.rules-group li + li {
+  margin-top: 4px;
+}
+
 /* ===== Spinner (used inside primary button) ===== */
 
 .spinner {

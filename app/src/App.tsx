@@ -4,6 +4,7 @@ import { Leaderboard } from "./components/Leaderboard";
 import { Admin } from "./components/Admin";
 import { TournamentBanner } from "./components/TournamentBanner";
 import { useTournament } from "./db/tournament";
+import { RULES } from "./rules";
 import "./App.css";
 import "./components/Admin.css";
 
@@ -40,6 +41,24 @@ function App() {
 
       <section className="leaderboard-section">
         <Leaderboard />
+      </section>
+
+      <section className="rules-section">
+        <details className="rules">
+          <summary>Rules</summary>
+          <div className="rules-body">
+            {RULES.map((section) => (
+              <div key={section.heading} className="rules-group">
+                <h3>{section.heading}</h3>
+                <ul>
+                  {section.items.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </details>
       </section>
 
       {modalOpen && <AddPlayerModal onClose={() => setModalOpen(false)} />}

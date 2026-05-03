@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { clearAllPlayers } from "../db/players";
+import { clearAllTimes } from "../db/times";
 import {
   advanceWeek,
   finishTournament,
@@ -40,7 +41,7 @@ export function Admin() {
     setResetting(true);
     setError(null);
     try {
-      await Promise.all([clearAllPlayers(), resetTournament()]);
+      await Promise.all([clearAllPlayers(), resetTournament(), clearAllTimes()]);
       setConfirmOpen(false);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to reset.";
