@@ -53,6 +53,16 @@
           ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 1800000"
         }
       }
+    },
+    "personalBests": {
+      ".read": true,
+      ".write": "!newData.exists()",
+      "$trackSlug": {
+        ".write": "$trackSlug.matches(/^(acorn-heights|airship-fortress|boo-cinema|bowsers-castle|cheep-cheep-falls|choco-mountain|crown-city|dandelion-depths|desert-hills|dino-dino-jungle|dk-pass|dk-spaceport|dry-bones-burnout|faraway-oasis|great-question-block-ruins|koopa-troopa-beach|mario-bros-circuit|mario-circuit|moo-moo-meadows|peach-beach|peach-stadium|rainbow-road|salty-salty-speedway|shy-guy-bazaar|sky-high-sundae|starview-peak|toads-factory|wario-shipyard|wario-stadium|whistlestop-summit)$/)",
+        "$playerId": {
+          ".validate": "newData.isNumber() && newData.val() > 0 && newData.val() <= 1800000"
+        }
+      }
     }
   }
 }
