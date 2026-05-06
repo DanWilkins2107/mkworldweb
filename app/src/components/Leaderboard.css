@@ -321,6 +321,8 @@
   .leaderboard-row {
     gap: 12px;
     padding: 10px 14px 10px 10px;
+    flex-wrap: wrap;
+    row-gap: 8px;
   }
   .leaderboard-rank {
     min-width: 46px;
@@ -337,6 +339,13 @@
   .leaderboard-points-value,
   .leaderboard-time {
     font-size: 18px;
+  }
+  /* Push time + action buttons onto a second row, indented under the player */
+  .leaderboard-time {
+    margin-left: calc(46px + 12px);
+  }
+  .leaderboard-player {
+    flex-basis: calc(100% - 46px - 12px);
   }
 }
 
