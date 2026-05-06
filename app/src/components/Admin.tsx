@@ -1,11 +1,9 @@
 import { useState } from "react";
-import { clearAllPlayers } from "../db/players";
-import { clearAllTimes } from "../db/times";
+import { clearAllPersonalBests } from "../db/personalBests";
 import {
   advanceWeek,
   finishTournament,
   pickNextWeekTrack,
-  resetTournament,
   startTournament,
   useTournament,
 } from "../db/tournament";
@@ -16,7 +14,7 @@ import "./Admin.css";
 export function Admin() {
   const tournament = useTournament();
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [resetting, setResetting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [tournamentBusy, setTournamentBusy] = useState(false);
@@ -37,17 +35,17 @@ export function Admin() {
     }
   }
 
-  async function handleReset() {
-    setResetting(true);
+  async function handleDeletePersonalBests() {
+    setDeleting(true);
     setError(null);
     try {
-      await Promise.all([clearAllPlayers(), resetTournament(), clearAllTimes()]);
+      await clearAllPersonalBests();
       setConfirmOpen(false);
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to reset.";
+      const message = err instanceof Error ? err.message : "Failed to delete personal bests.";
       setError(message);
     } finally {
-      setResetting(false);
+      setDeleting(false);
     }
   }
 
@@ -156,14 +154,14 @@ export function Admin() {
         <AdminSlackMessages />
 
         <div className="admin-card admin-card-spaced">
-          <h2>Reset tournament</h2>
-          <p>Wipes the tournament and every player. Starts everything from scratch. This cannot be undone.</p>
+          <h2>Delete all personal bests</h2>
+          <p>Wipes every personal-best entry on the records page. Tournament times, players, and tournament state are kept. This cannot be undone.</p>
           <button
             type="button"
             className="btn-danger"
             onClick={() => setConfirmOpen(true)}
           >
-            Reset
+            Delete all personal bests
           </button>
         </div>
       </section>
@@ -217,20 +215,20 @@ export function Admin() {
         <div
           className="modal-backdrop"
           onClick={() => {
-            if (!resetting) setConfirmOpen(false);
+            if (!deleting) setConfirmOpen(false);
           }}
         >
           <div
             className="modal"
             role="dialog"
             aria-modal="true"
-            aria-labelledby="reset-confirm-title"
+            aria-labelledby="delete-pbs-confirm-title"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="modal-body">
-              <h2 id="reset-confirm-title">Reset everything?</h2>
+              <h2 id="delete-pbs-confirm-title">Delete all personal bests?</h2>
               <p>
-                This will permanently delete the tournament and every player. There's no undo.
+                This will permanently delete every personal-best entry. Tournament times, players, and tournament state are kept. There's no undo.
               </p>
               {error && <div className="form-error">{error}</div>}
               <div className="modal-actions">
@@ -238,17 +236,17 @@ export function Admin() {
                   type="button"
                   className="btn-secondary"
                   onClick={() => setConfirmOpen(false)}
-                  disabled={resetting}
+                  disabled={deleting}
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
                   className="btn-danger"
-                  onClick={handleReset}
-                  disabled={resetting}
+                  onClick={handleDeletePersonalBests}
+                  disabled={deleting}
                 >
-                  {resetting ? <span className="spinner" aria-label="Resetting" /> : "Yes, reset"}
+                  {deleting ? <span className="spinner" aria-label="Deleting" /> : "Yes, delete"}
                 </button>
               </div>
             </div>

@@ -59,6 +59,3 @@ export async function updatePlayer(
   await update(ref(database, `${PLAYERS_PATH}/${id}`), fields);
 }
 
-export async function clearAllPlayers(): Promise<void> {
-  await set(ref(database, PLAYERS_PATH), null);
-}

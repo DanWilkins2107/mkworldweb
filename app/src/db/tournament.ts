@@ -98,10 +98,6 @@ export async function advanceWeek(): Promise<void> {
   await set(ref(database, `${TOURNAMENT_PATH}/currentWeek`), nextWeek);
 }
 
-export async function resetTournament(): Promise<void> {
-  await set(ref(database, TOURNAMENT_PATH), null);
-}
-
 export async function finishTournament(): Promise<void> {
   const tRef = ref(database, TOURNAMENT_PATH);
   const snapshot = await get(tRef);
