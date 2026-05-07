@@ -12,8 +12,11 @@ import {
   usePersonalBests,
 } from "../db/personalBests";
 import {
+  computeMedalTable,
   getBestTimeForTrack,
-  getRecordHoldersForTrack,
+  getMedalsForTrack,
+  type Medal,
+  type MedalGroup,
 } from "../db/records";
 import { formatTime, parseMaskedTime, useTimes } from "../db/times";
 import { useTournament } from "../db/tournament";
@@ -125,43 +128,61 @@ function RecordsList() {
         {!ready ? (
           <div className="leaderboard-status">Loading…</div>
         ) : (
-          <ul className="records-list">
-            {TRACKS.map((track) => {
-              const result = getRecordHoldersForTrack(
-                track.slug,
-                combined.map((p) => p.id),
-                tournament,
-                times,
-                personalBests,
-              );
-              const holderNames = result
-                ? result.holders
-                    .map((id) => combined.find((p) => p.id === id)?.name)
-                    .filter((n): n is string => Boolean(n))
-                    .join(", ")
-                : "—";
-              const timeText = result ? formatTime(result.ms) : "—";
-              return (
-                <li key={track.slug} className="records-row">
-                  <a
-                    href={`/records/${track.slug}`}
-                    className="records-row-link"
-                  >
-                    <img
-                      className="leaderboard-track-image"
-                      src={`/tracks/${track.slug}.png`}
-                      alt={track.displayName}
-                    />
-                    <span className="records-row-track">
-                      {track.displayName}
-                    </span>
-                    <span className="records-row-holder">{holderNames}</span>
-                    <span className="records-row-time">{timeText}</span>
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
+          <>
+            <MedalTable combined={combined} tournament={tournament} times={times} personalBests={personalBests} />
+            <ul className="records-list">
+              {TRACKS.map((track) => {
+                const groups = getMedalsForTrack(
+                  track.slug,
+                  combined.map((p) => p.id),
+                  tournament,
+                  times,
+                  personalBests,
+                );
+                return (
+                  <li key={track.slug} className="records-row">
+                    <a
+                      href={`/records/${track.slug}`}
+                      className="records-row-link"
+                    >
+                      <img
+                        className="leaderboard-track-image"
+                        src={`/tracks/${track.slug}.png`}
+                        alt={track.displayName}
+                      />
+                      <span className="records-row-track">
+                        {track.displayName}
+                      </span>
+                      <span className="records-row-medals">
+                        {groups.length === 0 ? (
+                          <span className="records-row-empty">No times submitted</span>
+                        ) : (
+                          groups.flatMap((g) =>
+                            g.playerIds
+                              .map((pid) => combined.find((p) => p.id === pid))
+                              .filter((p): p is CombinedPlayer => Boolean(p))
+                              .sort((a, b) => a.name.localeCompare(b.name))
+                              .map((p) => (
+                                <span
+                                  key={`${g.medal}-${p.id}`}
+                                  className="records-medal-row"
+                                >
+                                  <span className="records-medal-icon" aria-label={g.medal}>
+                                    {medalEmoji(g.medal)}
+                                  </span>
+                                  <span className="records-medal-name">{p.name}</span>
+                                  <span className="records-medal-time">{formatTime(g.ms)}</span>
+                                </span>
+                              )),
+                          )
+                        )}
+                      </span>
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </>
         )}
       </section>
 
@@ -240,6 +261,16 @@ function RecordsDetail({ trackSlug }: { trackSlug: string }) {
         })
     : [];
 
+  const medalGroups = ready
+    ? getMedalsForTrack(
+        trackSlug,
+        combined.map((p) => p.id),
+        tournament,
+        times,
+        personalBests,
+      )
+    : [];
+
   return (
     <>
       <header className="site-header">
@@ -278,6 +309,8 @@ function RecordsDetail({ trackSlug }: { trackSlug: string }) {
               const recordsPlayer = clickable
                 ? recordsPlayers!.find((rp) => rp.id === player.id) ?? null
                 : null;
+              const rankClass = rankClassFromMedals(player.id, medalGroups);
+              const position = rankPositionFromMedals(player.id, medalGroups);
               const inner = (
                 <>
                   <img
@@ -303,9 +336,18 @@ function RecordsDetail({ trackSlug }: { trackSlug: string }) {
                   key={player.id}
                   className={
                     "leaderboard-row" +
+                    (rankClass ? ` ${rankClass}` : "") +
                     (ms === undefined ? " leaderboard-row-unranked" : "")
                   }
                 >
+                  <span
+                    className={
+                      "leaderboard-rank" +
+                      (position === null ? " leaderboard-rank-empty" : "")
+                    }
+                  >
+                    {position ?? "—"}
+                  </span>
                   {clickable && recordsPlayer ? (
                     <button
                       type="button"
@@ -342,6 +384,102 @@ function RecordsDetail({ trackSlug }: { trackSlug: string }) {
       )}
     </>
   );
+}
+
+function medalEmoji(m: Medal): string {
+  return m === "gold" ? "🥇" : m === "silver" ? "🥈" : "🥉";
+}
+
+function MedalTable({
+  combined,
+  tournament,
+  times,
+  personalBests,
+}: {
+  combined: CombinedPlayer[];
+  tournament: import("../db/tournament").Tournament;
+  times: import("../db/times").AllTimes;
+  personalBests: import("../db/personalBests").PersonalBests;
+}) {
+  const tally = useMemo(
+    () =>
+      computeMedalTable(
+        TRACKS.map((t) => t.slug),
+        combined.map((p) => p.id),
+        tournament,
+        times,
+        personalBests,
+      ),
+    [combined, tournament, times, personalBests],
+  );
+  const rows = useMemo(() => {
+    const playerById = new Map(combined.map((p) => [p.id, p]));
+    return tally
+      .map((t) => ({ ...t, player: playerById.get(t.playerId) }))
+      .filter((r): r is typeof r & { player: CombinedPlayer } => Boolean(r.player))
+      .sort((a, b) => {
+        if (a.gold !== b.gold) return b.gold - a.gold;
+        if (a.silver !== b.silver) return b.silver - a.silver;
+        if (a.bronze !== b.bronze) return b.bronze - a.bronze;
+        return a.player.name.localeCompare(b.player.name);
+      });
+  }, [tally, combined]);
+
+  if (rows.length === 0) return null;
+
+  return (
+    <div className="medal-table">
+      <h2 className="medal-table-title">Medal table</h2>
+      <ol className="medal-table-list">
+        {rows.map((row, i) => (
+          <li key={row.playerId} className="medal-table-row">
+            <span className="medal-table-rank">{i + 1}</span>
+            <img
+              className="medal-table-avatar"
+              src={`/avatars/${row.player.avatar}.png`}
+              alt={row.player.avatar}
+              width={40}
+              height={40}
+            />
+            <span className="medal-table-name">{row.player.name}</span>
+            <span className="medal-table-counts">
+              <span className="medal-table-count" title="Gold">🥇 {row.gold}</span>
+              <span className="medal-table-count" title="Silver">🥈 {row.silver}</span>
+              <span className="medal-table-count" title="Bronze">🥉 {row.bronze}</span>
+            </span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+function rankClassFromMedals(
+  playerId: string,
+  groups: MedalGroup[],
+): string {
+  for (const g of groups) {
+    if (g.playerIds.includes(playerId)) {
+      if (g.medal === "gold") return "rank-1";
+      if (g.medal === "silver") return "rank-2";
+      return "rank-3";
+    }
+  }
+  return "";
+}
+
+function rankPositionFromMedals(
+  playerId: string,
+  groups: MedalGroup[],
+): number | null {
+  for (const g of groups) {
+    if (g.playerIds.includes(playerId)) {
+      if (g.medal === "gold") return 1;
+      if (g.medal === "silver") return 2;
+      return 3;
+    }
+  }
+  return null;
 }
 
 function maskInput(raw: string): string {

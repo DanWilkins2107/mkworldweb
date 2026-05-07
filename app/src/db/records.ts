@@ -35,6 +35,90 @@ export function getBestTimeForTrack(
   return Math.min(t, pb);
 }
 
+export type Medal = "gold" | "silver" | "bronze";
+
+export type MedalGroup = {
+  medal: Medal;
+  playerIds: string[];
+  ms: number;
+};
+
+export function getMedalsForTrack(
+  trackSlug: string,
+  allPlayerIds: string[],
+  tournament: Tournament,
+  allTimes: AllTimes,
+  personalBests: PersonalBests,
+): MedalGroup[] {
+  const playerBests: { playerId: string; ms: number }[] = [];
+  for (const pid of allPlayerIds) {
+    const ms = getBestTimeForTrack(
+      trackSlug,
+      pid,
+      tournament,
+      allTimes,
+      personalBests,
+    );
+    if (ms !== undefined) playerBests.push({ playerId: pid, ms });
+  }
+  if (playerBests.length === 0) return [];
+  playerBests.sort((a, b) => a.ms - b.ms);
+  const groups: { ms: number; playerIds: string[] }[] = [];
+  for (const { playerId, ms } of playerBests) {
+    const last = groups[groups.length - 1];
+    if (last && last.ms === ms) last.playerIds.push(playerId);
+    else groups.push({ ms, playerIds: [playerId] });
+  }
+  const medalNames: Medal[] = ["gold", "silver", "bronze"];
+  const result: MedalGroup[] = [];
+  let position = 1;
+  for (const g of groups) {
+    if (position > 3) break;
+    result.push({ medal: medalNames[position - 1], playerIds: g.playerIds, ms: g.ms });
+    position += g.playerIds.length;
+  }
+  return result;
+}
+
+export type MedalTally = {
+  playerId: string;
+  gold: number;
+  silver: number;
+  bronze: number;
+};
+
+export function computeMedalTable(
+  trackSlugs: string[],
+  allPlayerIds: string[],
+  tournament: Tournament,
+  allTimes: AllTimes,
+  personalBests: PersonalBests,
+): MedalTally[] {
+  const tally = new Map<string, MedalTally>();
+  for (const slug of trackSlugs) {
+    const groups = getMedalsForTrack(
+      slug,
+      allPlayerIds,
+      tournament,
+      allTimes,
+      personalBests,
+    );
+    for (const g of groups) {
+      for (const pid of g.playerIds) {
+        let entry = tally.get(pid);
+        if (!entry) {
+          entry = { playerId: pid, gold: 0, silver: 0, bronze: 0 };
+          tally.set(pid, entry);
+        }
+        entry[g.medal] += 1;
+      }
+    }
+  }
+  return Array.from(tally.values()).filter(
+    (t) => t.gold + t.silver + t.bronze > 0,
+  );
+}
+
 export function getRecordHoldersForTrack(
   trackSlug: string,
   allPlayerIds: string[],
