@@ -1,4 +1,5 @@
 import { onValue, push, ref, set, update } from "firebase/database";
+import { useEffect, useState } from "react";
 import { database } from "../firebase";
 
 export type Player = {
@@ -50,6 +51,15 @@ export async function addPlayer(player: NewPlayer): Promise<void> {
     slackName: player.slackName,
     avatar: player.avatar,
   });
+}
+
+export function usePlayers(): Player[] | null {
+  const [players, setPlayers] = useState<Player[] | null>(null);
+  useEffect(() => {
+    const unsubscribe = subscribeToPlayers(setPlayers);
+    return unsubscribe;
+  }, []);
+  return players;
 }
 
 export async function updatePlayer(

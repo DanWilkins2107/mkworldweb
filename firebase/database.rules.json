@@ -54,6 +54,23 @@
         }
       }
     },
+    "recordsPlayers": {
+      ".read": true,
+      ".write": "!newData.exists()",
+      "$id": {
+        ".write": "newData.exists()",
+        ".validate": "newData.hasChildren(['name', 'avatar'])",
+        "name": {
+          ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 50"
+        },
+        "avatar": {
+          ".validate": "newData.isString() && newData.val().matches(/^(baby-daisy|baby-luigi|baby-mario|baby-peach|baby-rosalina|birdo|bowser|bowser-jr|cataquack|chargin-chuck|cheep-cheep|coin-coffer|conkdor|cow|daisy|dolphin|donkey-kong|dry-bones|fish-bone|goomba|hammer-bro|king-boo|koopa-troopa|lakitu|luigi|mario|monty-mole|nabbit|para-biddybud|pauline|peach|peepa|penguin|pianta|piranha-plant|pokey|rocky-wrench|rosalina|shy-guy|sidestepper|snowman|spike|stingby|swoop|toad|toadette|waluigi|wario|wiggler|yoshi)$/)"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
     "personalBests": {
       ".read": true,
       ".write": "!newData.exists()",

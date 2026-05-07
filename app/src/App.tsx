@@ -2,11 +2,13 @@ import { useState } from "react";
 import { AddPlayerModal } from "./components/AddPlayerModal";
 import { Leaderboard } from "./components/Leaderboard";
 import { Admin } from "./components/Admin";
+import { Records } from "./components/Records";
 import { TournamentBanner } from "./components/TournamentBanner";
 import { useTournament } from "./db/tournament";
 import { RULES } from "./rules";
 import "./App.css";
 import "./components/Admin.css";
+import "./components/Records.css";
 
 function App() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -14,6 +16,10 @@ function App() {
 
   if (window.location.pathname.startsWith("/admin")) {
     return <Admin />;
+  }
+
+  if (window.location.pathname.startsWith("/records")) {
+    return <Records />;
   }
 
   const showAddPlayerButton =
@@ -63,6 +69,7 @@ function App() {
 
       {modalOpen && <AddPlayerModal onClose={() => setModalOpen(false)} />}
 
+      <a href="/records" className="records-link">Map records</a>
       <a href="/admin" className="admin-link">Admin</a>
     </>
   );
