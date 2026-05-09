@@ -1,4 +1,4 @@
-import { onValue, ref, set } from "firebase/database";
+import { onValue, ref, remove, set } from "firebase/database";
 import { useEffect, useState } from "react";
 import { database } from "../firebase";
 
@@ -51,6 +51,15 @@ export async function setPersonalBest(
   await set(
     ref(database, `${PERSONAL_BESTS_PATH}/${trackSlug}/${playerId}`),
     ms,
+  );
+}
+
+export async function removePersonalBest(
+  trackSlug: string,
+  playerId: string,
+): Promise<void> {
+  await remove(
+    ref(database, `${PERSONAL_BESTS_PATH}/${trackSlug}/${playerId}`),
   );
 }
 

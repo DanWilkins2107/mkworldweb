@@ -8,6 +8,7 @@ import {
   type RecordsPlayer,
 } from "../db/recordsPlayers";
 import {
+  removePersonalBest,
   setPersonalBest,
   usePersonalBests,
 } from "../db/personalBests";
@@ -208,6 +209,8 @@ function RecordsDetail({ trackSlug }: { trackSlug: string }) {
   const personalBests = usePersonalBests();
   const [submitOpen, setSubmitOpen] = useState(false);
   const [editPlayer, setEditPlayer] = useState<RecordsPlayer | null>(null);
+  const [editPbPlayerId, setEditPbPlayerId] = useState<string | null>(null);
+  const [removingPbId, setRemovingPbId] = useState<string | null>(null);
 
   const combined = useMemo(
     () => combinePlayers(players ?? [], recordsPlayers ?? []),
@@ -311,6 +314,7 @@ function RecordsDetail({ trackSlug }: { trackSlug: string }) {
                 : null;
               const rankClass = rankClassFromMedals(player.id, medalGroups);
               const position = rankPositionFromMedals(player.id, medalGroups);
+              const hasPb = personalBests![trackSlug]?.[player.id] !== undefined;
               const inner = (
                 <>
                   <img
@@ -321,14 +325,6 @@ function RecordsDetail({ trackSlug }: { trackSlug: string }) {
                     height={48}
                   />
                   <span className="leaderboard-name">{player.name}</span>
-                  <span
-                    className={
-                      "leaderboard-time" +
-                      (ms === undefined ? " leaderboard-time-empty" : "")
-                    }
-                  >
-                    {ms === undefined ? "—" : formatTime(ms)}
-                  </span>
                 </>
               );
               return (
@@ -362,6 +358,44 @@ function RecordsDetail({ trackSlug }: { trackSlug: string }) {
                       {inner}
                     </div>
                   )}
+                  <span
+                    className={
+                      "leaderboard-time" +
+                      (ms === undefined ? " leaderboard-time-empty" : "")
+                    }
+                  >
+                    {ms === undefined ? "—" : formatTime(ms)}
+                  </span>
+                  <span className="leaderboard-row-actions">
+                    <button
+                      type="button"
+                      className="leaderboard-row-btn"
+                      onClick={() => setEditPbPlayerId(player.id)}
+                      disabled={removingPbId === player.id}
+                      aria-label={`${hasPb ? "Edit" : "Add"} ${player.name}'s PB`}
+                    >
+                      {hasPb ? "Edit" : "Add PB"}
+                    </button>
+                    {hasPb && (
+                      <button
+                        type="button"
+                        className="leaderboard-row-btn leaderboard-row-btn-danger"
+                        onClick={async () => {
+                          if (!window.confirm(`Remove ${player.name}'s PB for this track?`)) return;
+                          setRemovingPbId(player.id);
+                          try {
+                            await removePersonalBest(trackSlug, player.id);
+                          } finally {
+                            setRemovingPbId(null);
+                          }
+                        }}
+                        disabled={removingPbId === player.id}
+                        aria-label={`Remove ${player.name}'s PB`}
+                      >
+                        {removingPbId === player.id ? "…" : "Remove PB"}
+                      </button>
+                    )}
+                  </span>
                 </li>
               );
             })}
@@ -374,6 +408,15 @@ function RecordsDetail({ trackSlug }: { trackSlug: string }) {
           players={combined}
           lockedTrackSlug={trackSlug}
           onClose={() => setSubmitOpen(false)}
+        />
+      )}
+      {editPbPlayerId !== null && ready && (
+        <SubmitPbModal
+          players={combined}
+          lockedTrackSlug={trackSlug}
+          initialPlayerId={editPbPlayerId}
+          initialMs={personalBests![trackSlug]?.[editPbPlayerId]}
+          onClose={() => setEditPbPlayerId(null)}
         />
       )}
       {editPlayer && (
@@ -494,18 +537,32 @@ function maskInput(raw: string): string {
   return `${m}:${rest.slice(0, 2)}.${rest.slice(2)}`;
 }
 
+function msToMaskedString(ms: number): string {
+  const totalCs = Math.max(0, Math.round(ms));
+  const minutes = Math.floor(totalCs / 60000);
+  const seconds = Math.floor((totalCs % 60000) / 1000);
+  const millis = totalCs % 1000;
+  return `${minutes}:${String(seconds).padStart(2, "0")}.${String(millis).padStart(3, "0")}`;
+}
+
 function SubmitPbModal({
   players,
   lockedTrackSlug,
+  initialPlayerId,
+  initialMs,
   onClose,
 }: {
   players: CombinedPlayer[];
   lockedTrackSlug: string | null;
+  initialPlayerId?: string;
+  initialMs?: number;
   onClose: () => void;
 }) {
   const [trackSlug, setTrackSlug] = useState<string>(lockedTrackSlug ?? "");
-  const [playerId, setPlayerId] = useState<string>("");
-  const [timeText, setTimeText] = useState<string>("");
+  const [playerId, setPlayerId] = useState<string>(initialPlayerId ?? "");
+  const [timeText, setTimeText] = useState<string>(
+    initialMs !== undefined ? msToMaskedString(initialMs) : "",
+  );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [touched, setTouched] = useState(false);
@@ -589,7 +646,7 @@ function SubmitPbModal({
               <select
                 value={playerId}
                 onChange={(e) => setPlayerId(e.target.value)}
-                disabled={submitting}
+                disabled={submitting || initialPlayerId !== undefined}
                 required
                 className="submit-time-select"
               >
