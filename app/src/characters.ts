@@ -10,6 +10,7 @@ export const CHARACTERS: Character[] = [
   { slug: "yoshi", displayName: "Yoshi" },
   { slug: "birdo", displayName: "Birdo" },
   { slug: "toad", displayName: "Toad" },
+  { slug: "pro-racer-toad", displayName: "Pro Racer Toad" },
   { slug: "toadette", displayName: "Toadette" },
   { slug: "koopa-troopa", displayName: "Koopa Troopa" },
   { slug: "shy-guy", displayName: "Shy Guy" },
