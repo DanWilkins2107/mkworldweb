@@ -52,6 +52,7 @@ export const CHARACTERS: Character[] = [
   { slug: "rocky-wrench", displayName: "Rocky Wrench" },
   { slug: "spike", displayName: "Spike" },
   { slug: "swoop", displayName: "Swoop" },
+  { slug: "obama", displayName: "Obama" },
 ];
 
 export function isValidAvatarSlug(slug: string): boolean {
