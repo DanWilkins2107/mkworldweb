@@ -32,6 +32,14 @@ From `app/`:
 - `npm run lint` — ESLint
 - `npx tsc --noEmit` — type check
 
+## CD
+
+`.github/workflows/deploy.yml` deploys on push to `main` (or manual dispatch). It runs the same `npm run deploy`.
+
+One secret only, on the `production` environment: `FIREBASE_SERVICE_ACCOUNT` — a JSON key for a service account with Firebase Hosting Admin + Firebase Realtime Database Admin on `softwire-mkworld-tournament`.
+
+The `VITE_FIREBASE_*` values are inlined in the workflow. They are public by design (Vite bakes them into the bundle); access control lives in `firebase/database.rules.json`.
+
 ## Testing
 
 TBD — fill in once the first test lands.
