@@ -3,6 +3,7 @@ import { AddPlayerModal } from "./components/AddPlayerModal";
 import { Leaderboard } from "./components/Leaderboard";
 import { Admin } from "./components/Admin";
 import { Records } from "./components/Records";
+import { PlayerStats } from "./components/PlayerStats";
 import { TournamentBanner } from "./components/TournamentBanner";
 import { useTournament } from "./db/tournament";
 import { RULES } from "./rules";
@@ -20,6 +21,10 @@ function App() {
 
   if (window.location.pathname.startsWith("/records")) {
     return <Records />;
+  }
+
+  if (window.location.pathname.startsWith("/player-stats")) {
+    return <PlayerStats />;
   }
 
   const showAddPlayerButton =
@@ -69,6 +74,7 @@ function App() {
 
       {modalOpen && <AddPlayerModal onClose={() => setModalOpen(false)} />}
 
+      <a href="/player-stats" className="player-stats-link">Player stats</a>
       <a href="/records" className="records-link">Map records</a>
       <a href="/admin" className="admin-link">Admin</a>
     </>
