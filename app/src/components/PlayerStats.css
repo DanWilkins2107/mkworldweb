@@ -525,7 +525,7 @@
 
 .player-stats-link {
   position: fixed;
-  bottom: 96px;
+  bottom: 84px;
   left: 16px;
   font-family: var(--display);
   font-size: 16px;
@@ -565,6 +565,6 @@
   .player-stats-link {
     font-size: 14px;
     padding: 10px 18px;
-    bottom: 88px;
+    bottom: 78px;
   }
 }
