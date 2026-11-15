@@ -43,8 +43,8 @@
 
   font: 16px/1.45 var(--sans);
   color: var(--ink);
-  /* sky colour behind mobile overscroll instead of white */
-  background: var(--mk-sky-top) linear-gradient(180deg, var(--mk-sky-top), #e8f8ff);
+  /* flat sky colour behind mobile overscroll; the gradient lives on body::before */
+  background: var(--mk-sky-top);
   overscroll-behavior-y: none;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -60,6 +60,16 @@ body {
   margin: 0;
   min-height: 100svh;
   color: var(--ink);
+}
+
+/* Sky pinned to the screen. A fixed layer rather than background-attachment:
+   fixed, which iOS Safari ignores. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
   background:
     /* soft cloud highlights */
     radial-gradient(
@@ -79,14 +89,18 @@ body {
       var(--mk-sky-bottom) 60%,
       #e8f8ff 100%
     );
-  background-attachment: fixed;
 }
 
 #root {
   width: 1180px;
   max-width: 100%;
   margin: 0 auto;
-  padding: 0 16px 64px;
+  /* viewport-fit=cover: keep content clear of the notch and home bar */
+  padding:
+    env(safe-area-inset-top)
+    calc(16px + env(safe-area-inset-right))
+    calc(64px + env(safe-area-inset-bottom))
+    calc(16px + env(safe-area-inset-left));
   text-align: center;
   min-height: 100svh;
   display: flex;

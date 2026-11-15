@@ -245,8 +245,8 @@
 
 .records-link {
   position: fixed;
-  bottom: 4px;
-  left: 16px;
+  bottom: calc(4px + env(safe-area-inset-bottom));
+  left: calc(16px + env(safe-area-inset-left));
   font-family: var(--display);
   font-size: 16px;
   letter-spacing: 1px;

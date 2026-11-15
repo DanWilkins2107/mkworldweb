@@ -91,8 +91,8 @@
 
 .admin-link {
   position: fixed;
-  bottom: 12px;
-  right: 16px;
+  bottom: calc(12px + env(safe-area-inset-bottom));
+  right: calc(16px + env(safe-area-inset-right));
   font-size: 12px;
   font-family: var(--display);
   letter-spacing: 1px;
