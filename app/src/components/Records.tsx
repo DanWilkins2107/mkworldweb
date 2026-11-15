@@ -132,7 +132,7 @@ function RecordsList() {
           <>
             <MedalTable combined={combined} tournament={tournament} times={times} personalBests={personalBests} />
             <ul className="records-list">
-              {TRACKS.map((track) => {
+              {[...TRACKS].sort((a, b) => a.displayName.localeCompare(b.displayName)).map((track) => {
                 const groups = getMedalsForTrack(
                   track.slug,
                   combined.map((p) => p.id),
