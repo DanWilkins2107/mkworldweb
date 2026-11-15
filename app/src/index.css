@@ -43,9 +43,7 @@
 
   font: 16px/1.45 var(--sans);
   color: var(--ink);
-  /* sky colour behind mobile overscroll instead of white */
-  background: var(--mk-sky-top) linear-gradient(180deg, var(--mk-sky-top), #e8f8ff);
-  overscroll-behavior-y: none;
+  background: var(--paper);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
