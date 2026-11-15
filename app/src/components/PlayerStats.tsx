@@ -23,7 +23,8 @@ import {
 import { usePersonalBests, type PersonalBests } from "../db/personalBests";
 import { useTournament, type Tournament } from "../db/tournament";
 import { TRACKS } from "../tracks";
-import { Trophy, colorForRank } from "./Trophy";
+import { Trophy } from "./Trophy";
+import { colorForRank } from "../rankColors";
 import "./Records.css";
 import "./PlayerStats.css";
 
